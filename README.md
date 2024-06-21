@@ -10,4 +10,5 @@ Because of the way that this mod is coded it **works with all modded villagers**
 The mod is **fully server side** and vanilla clients can use it when its installed on the server side
 
 [Modrinth page](https://modrinth.com/mod/villager-pickup)
+
 [CurseForge page](https://www.curseforge.com/minecraft/mc-mods/villagerpickup)
