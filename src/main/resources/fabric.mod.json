@@ -1,11 +1,12 @@
 {
 	"schemaVersion": 1,
-	"id": "villager-pickup",
+	"id": "entity-pickup",
 	"version": "${version}",
-	"name": "Villager Pickup",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "Entity Pickup",
+	"description": "Configurable mod about picking up useful entities",
 	"authors": [
-		"LivingLemming"
+		"LivingLemming",
+		"eeverest"
 	],
 	"contact": {
 		"homepage": "https://modrinth.com/mod/villager-pickup",
@@ -16,11 +17,11 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-          "com.livinglemming.VillagerPickup"
+          "com.livinglemming.EntityPickup"
 		]
 	},
 	"mixins": [
-		"villager-pickup.mixins.json"
+		"entity-pickup.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.14.19",
