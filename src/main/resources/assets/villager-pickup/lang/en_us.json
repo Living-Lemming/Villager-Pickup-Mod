@@ -1,6 +1,6 @@
 {
   "entity-pickup.midnightconfig.title": "Entity Pickup",
 
-  "entity-pickup.midnightcongig.Piglin": "Piglin Pickup?",
-  "entity-pickup.midnightcongig.Villager": "Villager Pickup?"
+  "entity-pickup.midnightconfig.Piglin": "Piglin Pickup?",
+  "entity-pickup.midnightconfig.Villager": "Villager Pickup?"
 }

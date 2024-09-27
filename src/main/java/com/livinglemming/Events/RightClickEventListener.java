@@ -55,35 +55,36 @@ public class RightClickEventListener {
                     villager.remove(Entity.RemovalReason.DISCARDED);
                     return ActionResult.SUCCESS;
                 }
-                if (player.isSneaking() && entity instanceof PiglinEntity piglin) {
-                    if ( EntityPickupConfig.Piglin ) {
-                        NbtCompound nbt = new NbtCompound();
-                        piglin.writeCustomDataToNbt(nbt);
+            }
 
-                        if (!PiglinBrain.wearsGoldArmor(player)) {
-                            player.sendMessage(Text.literal("You need to equip some gold armor to pickup a piglin"));
-                            return ActionResult.FAIL;
-                        }
+            if (player.isSneaking() && entity instanceof PiglinEntity piglin) {
+                if ( EntityPickupConfig.Piglin ) {
+                    NbtCompound nbt = new NbtCompound();
+                    piglin.writeCustomDataToNbt(nbt);
 
-                        Item spawnEgg = SpawnEggItem.forEntity(piglin.getType());
-                        if (spawnEgg != null) {
-                            ItemStack spawnEggStack = new ItemStack(spawnEgg);
-
-                            NbtCompound nbtCompound = new NbtCompound();
-
-                            nbtCompound.put("EntityTag", nbt);
-
-                            spawnEggStack.setNbt(nbtCompound);
-                            if (player.getInventory().getEmptySlot() != -1) {
-                                player.giveItemStack(spawnEggStack);
-                            } else {
-                                player.dropItem(spawnEggStack, true);
-                            }
-                        }
-
-                        piglin.remove(Entity.RemovalReason.DISCARDED);
-                        return ActionResult.SUCCESS;
+                    if (!PiglinBrain.wearsGoldArmor(player)) {
+                        player.sendMessage(Text.literal("You need to equip golden armor to pickup a piglin"));
+                        return ActionResult.FAIL;
                     }
+
+                    Item spawnEgg = SpawnEggItem.forEntity(piglin.getType());
+                    if (spawnEgg != null) {
+                        ItemStack spawnEggStack = new ItemStack(spawnEgg);
+
+                        NbtCompound nbtCompound = new NbtCompound();
+
+                        nbtCompound.put("EntityTag", nbt);
+
+                        spawnEggStack.setNbt(nbtCompound);
+                        if (player.getInventory().getEmptySlot() != -1) {
+                            player.giveItemStack(spawnEggStack);
+                        } else {
+                            player.dropItem(spawnEggStack, true);
+                        }
+                    }
+
+                    piglin.remove(Entity.RemovalReason.DISCARDED);
+                    return ActionResult.SUCCESS;
                 }
             }
 
@@ -93,12 +94,10 @@ public class RightClickEventListener {
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             if (!player.isCreative() && world.getBlockState(hitResult.getBlockPos()).getBlock() == Blocks.SPAWNER && player.getStackInHand(hand).getItem() == Items.VILLAGER_SPAWN_EGG) {
                 player.sendMessage(Text.literal("You cannot put picked up mobs in spawners!").formatted(Formatting.RED));
-                world.playSound(null, player.getBlockPos(), SoundEvents.BLOCK_STONE_BREAK, SoundCategory.BLOCKS, 1f, 0.5f);
                 return ActionResult.FAIL;
             }
             if ( !player.isCreative() && world.getBlockState(hitResult.getBlockPos()).getBlock() == Blocks.SPAWNER && player.getStackInHand(hand).getItem() == Items.PIGLIN_SPAWN_EGG ) {
                 player.sendMessage(Text.literal("You cannot put picked up mobs in spawners!").formatted(Formatting.RED));
-                world.playSound(null, player.getBlockPos(), SoundEvents.BLOCK_STONE_BREAK, SoundCategory.BLOCKS, 1f, 0.5f);
                 return ActionResult.FAIL;
             }
 
