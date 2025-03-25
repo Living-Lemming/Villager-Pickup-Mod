@@ -3,6 +3,10 @@ package com.livinglemming.Events;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.block.Blocks;
+import net.minecraft.component.ComponentChanges;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.LoreComponent;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.item.Item;
@@ -10,8 +14,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 
 public class RightClickEventListener {
@@ -25,16 +29,30 @@ public class RightClickEventListener {
                 if (spawnEgg != null) {
                     ItemStack spawnEggStack = new ItemStack(spawnEgg);
 
-                    NbtCompound nbtCompound = new NbtCompound();
-                    NbtCompound textCompound = new NbtCompound();
-                    NbtList tooltipList = new NbtList();
+                    nbt.put("id", NbtString.of("minecraft:villager"));
+                    NbtComponent entityData = NbtComponent.of(nbt);
 
-                    nbtCompound.put("EntityTag", nbt);
-                    tooltipList.add(NbtString.of("{\"text\":\"Profession: [" + villager.getVillagerData().getProfession().toString() + "]\",\"color\":\"gray\",\"italic\":false}"));
-                    textCompound.put("Lore", tooltipList);
-                    nbtCompound.put("display", textCompound);
+                    Text professionText = Text.literal("Profession: [" + villager.getVillagerData().getProfession() + "]");
+                    LoreComponent loreData = new LoreComponent(professionText.getWithStyle(professionText.getStyle().withItalic(false).withColor(0x808080)));
 
-                    spawnEggStack.setNbt(nbtCompound);
+                    ComponentChanges changes = ComponentChanges.builder()
+                            .add(DataComponentTypes.ENTITY_DATA, entityData)
+                            .add(DataComponentTypes.LORE, loreData)
+                            .build();
+
+                    spawnEggStack.applyChanges(changes);
+
+                    // Pre Component Change Code below:
+//                    NbtCompound nbtCompound = new NbtCompound();
+//                    NbtCompound textCompound = new NbtCompound();
+//                    NbtList tooltipList = new NbtList();
+//
+//                    nbtCompound.put("EntityTag", nbt);
+//                    tooltipList.add(NbtString.of("{\"text\":\"Profession: [" + villager.getVillagerData().getProfession().toString() + "]\",\"color\":\"gray\",\"italic\":false}"));
+//                    textCompound.put("Lore", tooltipList);
+//                    nbtCompound.put("display", textCompound);
+//
+//                    spawnEggStack.setNbt(nbtCompound);
                     if (player.getInventory().getEmptySlot() != -1) {
                         player.giveItemStack(spawnEggStack);
                     } else {

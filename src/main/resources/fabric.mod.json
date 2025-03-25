@@ -3,9 +3,10 @@
 	"id": "villager-pickup",
 	"version": "${version}",
 	"name": "Villager Pickup",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Pick up and carry villagers with ease! Now with support for 1.21.4!",
 	"authors": [
-		"LivingLemming"
+		"LivingLemming",
+		"GunnableScum"
 	],
 	"contact": {
 		"homepage": "https://modrinth.com/mod/villager-pickup",
@@ -19,16 +20,10 @@
           "com.livinglemming.VillagerPickup"
 		]
 	},
-	"mixins": [
-		"villager-pickup.mixins.json"
-	],
 	"depends": {
-		"fabricloader": ">=0.14.19",
-		"minecraft": ">=1.19",
-		"java": ">=17",
+		"fabricloader": ">=0.16.10",
+		"minecraft": "=1.21.4",
+		"java": ">=21",
 		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
 	}
 }
