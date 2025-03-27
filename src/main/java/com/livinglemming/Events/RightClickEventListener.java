@@ -46,6 +46,10 @@ public class RightClickEventListener {
 
                     List<Text> lore = new java.util.ArrayList<>(List.of(healthText, professionText));
 
+                    // Add Level to lore if applicable
+                    if(villager.getVillagerData().getLevel() > 1) {
+                        lore.add(createLoreText("Level: [" + villager.getVillagerData().getLevel() + "]"));
+                    }
 
                     TradeOfferList list = villager.getOffers();
                     if(!list.isEmpty()) {
