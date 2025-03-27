@@ -61,12 +61,15 @@ public class RightClickEventListener {
                     }
                     LoreComponent loreData = new LoreComponent(lore);
 
-                    ComponentChanges changes = ComponentChanges.builder()
+                    ComponentChanges.Builder changes = ComponentChanges.builder()
                             .add(DataComponentTypes.ENTITY_DATA, entityData)
-                            .add(DataComponentTypes.LORE, loreData)
-                            .build();
+                            .add(DataComponentTypes.LORE, loreData);
 
-                    spawnEggStack.applyChanges(changes);
+                    if(villager.hasCustomName()) {
+                        changes.add(DataComponentTypes.CUSTOM_NAME, villager.getCustomName());
+                    }
+
+                    spawnEggStack.applyChanges(changes.build());
                     if (player.getInventory().getEmptySlot() != -1) {
                         player.giveItemStack(spawnEggStack);
                     } else {
