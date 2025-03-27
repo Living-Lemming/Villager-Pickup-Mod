@@ -15,12 +15,20 @@ import net.minecraft.item.Items;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.village.TradeOffer;
+import net.minecraft.village.TradeOfferList;
+import net.minecraft.village.TradedItem;
+
+import java.util.List;
+import java.util.Optional;
 
 public class RightClickEventListener {
     public static void registerRightClickEvent() {
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+            if(world.isClient) return ActionResult.PASS;
             if (player.isSneaking() && entity instanceof VillagerEntity villager) {
                 NbtCompound nbt = new NbtCompound();
                 villager.writeCustomDataToNbt(nbt);
@@ -32,8 +40,30 @@ public class RightClickEventListener {
                     nbt.put("id", NbtString.of("minecraft:villager"));
                     NbtComponent entityData = NbtComponent.of(nbt);
 
-                    Text professionText = Text.literal("Profession: [" + villager.getVillagerData().getProfession() + "]");
-                    LoreComponent loreData = new LoreComponent(professionText.getWithStyle(professionText.getStyle().withItalic(false).withColor(0x808080)));
+                    // TODO: Display Health as Hearts
+                    Text healthText = createLoreText("Health: [" + villager.getHealth() + " / " + villager.getMaxHealth() + "]");
+                    Text professionText = createLoreText("Profession: [" + villager.getVillagerData().getProfession() + "]");
+
+                    List<Text> lore = new java.util.ArrayList<>(List.of(healthText, professionText));
+
+
+                    // TODO: Trades in the lore
+                    TradeOfferList list = villager.getOffers();
+                    for(TradeOffer offer : list) {
+                        ItemStack firstBuyItem = offer.getFirstBuyItem().itemStack();
+                        Optional<TradedItem> secondBuyItem = offer.getSecondBuyItem();
+                        ItemStack sellItem = offer.getSellItem();
+
+                        String toDisplay = firstBuyItem.getCount() + "x " + firstBuyItem.getItemName().toString();
+                        if(secondBuyItem.isPresent()) {
+                            ItemStack secondBuyItemStack = secondBuyItem.get().itemStack();
+                            toDisplay += " + " + secondBuyItemStack.getCount() + "x " + secondBuyItemStack.getItemName().toString();
+                        }
+                        toDisplay += " = " + sellItem.getCount() + "x " + sellItem.getItemName().toString();
+
+                        lore.add(createLoreText(toDisplay));
+                    }
+                    LoreComponent loreData = new LoreComponent(lore);
 
                     ComponentChanges changes = ComponentChanges.builder()
                             .add(DataComponentTypes.ENTITY_DATA, entityData)
@@ -41,18 +71,6 @@ public class RightClickEventListener {
                             .build();
 
                     spawnEggStack.applyChanges(changes);
-
-                    // Pre Component Change Code below:
-//                    NbtCompound nbtCompound = new NbtCompound();
-//                    NbtCompound textCompound = new NbtCompound();
-//                    NbtList tooltipList = new NbtList();
-//
-//                    nbtCompound.put("EntityTag", nbt);
-//                    tooltipList.add(NbtString.of("{\"text\":\"Profession: [" + villager.getVillagerData().getProfession().toString() + "]\",\"color\":\"gray\",\"italic\":false}"));
-//                    textCompound.put("Lore", tooltipList);
-//                    nbtCompound.put("display", textCompound);
-//
-//                    spawnEggStack.setNbt(nbtCompound);
                     if (player.getInventory().getEmptySlot() != -1) {
                         player.giveItemStack(spawnEggStack);
                     } else {
@@ -75,4 +93,10 @@ public class RightClickEventListener {
             return ActionResult.PASS;
         });
     }
+
+    private static Text createLoreText(String inputText) {
+        MutableText text = Text.literal(inputText);
+        return text.setStyle(text.getStyle().withItalic(false).withColor(0x808080));
+    }
+
 }
