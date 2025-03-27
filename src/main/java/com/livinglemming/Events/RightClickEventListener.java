@@ -21,6 +21,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOfferList;
 import net.minecraft.village.TradedItem;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,28 +41,19 @@ public class RightClickEventListener {
                     nbt.put("id", NbtString.of("minecraft:villager"));
                     NbtComponent entityData = NbtComponent.of(nbt);
 
-                    // TODO: Display Health as Hearts
-                    Text healthText = createLoreText("Health: [" + villager.getHealth() + " / " + villager.getMaxHealth() + "]");
+                    Text healthText = createHealthText(villager.getHealth(), villager.getMaxHealth());
                     Text professionText = createLoreText("Profession: [" + villager.getVillagerData().getProfession() + "]");
 
                     List<Text> lore = new java.util.ArrayList<>(List.of(healthText, professionText));
 
 
-                    // TODO: Trades in the lore
                     TradeOfferList list = villager.getOffers();
+                    if(!list.isEmpty()) {
+                        lore.add(Text.literal(""));
+                        lore.add(createLoreText("Trades:"));
+                    }
                     for(TradeOffer offer : list) {
-                        ItemStack firstBuyItem = offer.getFirstBuyItem().itemStack();
-                        Optional<TradedItem> secondBuyItem = offer.getSecondBuyItem();
-                        ItemStack sellItem = offer.getSellItem();
-
-                        String toDisplay = firstBuyItem.getCount() + "x " + firstBuyItem.getItemName().toString();
-                        if(secondBuyItem.isPresent()) {
-                            ItemStack secondBuyItemStack = secondBuyItem.get().itemStack();
-                            toDisplay += " + " + secondBuyItemStack.getCount() + "x " + secondBuyItemStack.getItemName().toString();
-                        }
-                        toDisplay += " = " + sellItem.getCount() + "x " + sellItem.getItemName().toString();
-
-                        lore.add(createLoreText(toDisplay));
+                        lore.add(convertTradeToText(offer));
                     }
                     LoreComponent loreData = new LoreComponent(lore);
 
@@ -94,9 +86,41 @@ public class RightClickEventListener {
         });
     }
 
-    private static Text createLoreText(String inputText) {
+    private static @NotNull Text convertTradeToText(TradeOffer offer) {
+    ItemStack firstBuyItem = offer.getFirstBuyItem().itemStack();
+    Optional<TradedItem> secondBuyItem = offer.getSecondBuyItem();
+    ItemStack sellItem = offer.getSellItem();
+
+    MutableText toDisplay = Text.literal(firstBuyItem.getCount() + "x ").append(Text.translatable(firstBuyItem.getItem().getTranslationKey()));
+    if (secondBuyItem.isPresent()) {
+        ItemStack secondBuyItemStack = secondBuyItem.get().itemStack();
+        toDisplay.append(" + ").append(secondBuyItemStack.getCount() + "x ").append(Text.translatable(secondBuyItemStack.getItem().getTranslationKey()));
+    }
+    toDisplay.append(" = " + sellItem.getCount() + "x ").append(Text.translatable(sellItem.getItem().getTranslationKey()));
+    return createLoreText(toDisplay);
+}
+
+    private static MutableText createLoreText(String inputText) {
         MutableText text = Text.literal(inputText);
         return text.setStyle(text.getStyle().withItalic(false).withColor(0x808080));
+    }
+
+    private static MutableText createLoreText(MutableText inputText) {
+        return inputText.setStyle(inputText.getStyle().withItalic(false).withColor(0x808080));
+    }
+
+    private static Text createHealthText(float health, float maxHealth) {
+        char fullHeart = '❤';
+        char damagedHeart = '❥';
+
+        int fullHearts = (int) Math.floor(health);
+        int halfHearts = (int) Math.ceil(health - fullHearts);
+
+        MutableText fullHeartText = Text.literal(String.valueOf(fullHeart).repeat(fullHearts)).withColor(0xFF0000);
+        MutableText halfHeartText = Text.literal(String.valueOf(damagedHeart).repeat(halfHearts)).withColor(0xFF0000);
+        MutableText missingHeartText = Text.literal(String.valueOf(fullHeart).repeat((int) Math.ceil(maxHealth - health))).withColor(0x808080);
+
+        return createLoreText("Health: ").append(fullHeartText).append(halfHeartText).append(missingHeartText);
     }
 
 }
