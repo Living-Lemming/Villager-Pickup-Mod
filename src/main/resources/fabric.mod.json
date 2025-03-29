@@ -20,6 +20,10 @@
           "com.livinglemming.VillagerPickup"
 		]
 	},
+	"mixins": [
+		"villager-pickup.mixins.json"
+	],
+	"accessWidener": "villager-pickup.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.16.10",
 		"minecraft": "=1.21.4",

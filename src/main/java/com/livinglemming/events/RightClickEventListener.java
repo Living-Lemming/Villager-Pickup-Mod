@@ -1,5 +1,6 @@
-package com.livinglemming.Events;
+package com.livinglemming.events;
 
+import live.gunnablescum.configuration.ConfigurationHandler;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.block.Blocks;
@@ -30,6 +31,7 @@ public class RightClickEventListener {
     public static void registerRightClickEvent() {
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if(world.isClient) return ActionResult.PASS;
+            if(!ConfigurationHandler.getBoolean("enable_villager_pickup")) return ActionResult.PASS;
             if (player.isSneaking() && entity instanceof VillagerEntity villager) {
                 NbtCompound nbt = new NbtCompound();
                 villager.writeCustomDataToNbt(nbt);
