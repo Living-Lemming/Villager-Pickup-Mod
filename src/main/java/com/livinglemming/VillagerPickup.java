@@ -27,7 +27,8 @@ public class VillagerPickup implements ModInitializer {
 			dispatcher.register(literal("villager-pickup")
 					.then(literal("status").executes(context -> {
 						context.getSource().sendMessage(Text.literal("Villager-Pickup Status:").fillStyle(Style.EMPTY.withFormatting(Formatting.GOLD)));
-						context.getSource().sendMessage(getStatusOfBool("enable_villager_pickup", "Villager Pickup enabled"));
+						context.getSource().sendMessage(getStatusOfBool("enable_villager_pickup", "Villager Pickup"));
+						context.getSource().sendMessage(getStatusOfBool("allow_villager_rename_with_anvil", "Villager Anvil Renaming"));
 						return 1;
 					}))
 					.then(literal("reload").requires(source -> source.hasPermissionLevel(4)).executes(context -> {

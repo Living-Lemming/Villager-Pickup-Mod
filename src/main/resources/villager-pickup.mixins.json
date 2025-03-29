@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "live.gunnablescum.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AnvilBehaviorMixin"
+  ],
+  "injectors":{
+    "defaultRequire": 1
+  }
+}
