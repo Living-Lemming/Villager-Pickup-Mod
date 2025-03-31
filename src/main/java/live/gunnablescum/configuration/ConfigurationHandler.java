@@ -16,27 +16,43 @@ import java.util.Map;
 public class ConfigurationHandler {
     private static Configuration config = Configuration.loadConfig(getConfigFile());
 
-    public static Configuration getConfig() {
-        return config;
-    }
-
     public static void reloadConfig() {
         config = Configuration.loadConfig(getConfigFile());
     }
 
     public static boolean getBoolean(String key) {
-    for (ConfigurationObject<?> section : config.sections) {
-        if (section instanceof ConfigurationObject<?> && section.values.get(key) instanceof Boolean) {
-            return (boolean) section.values.get(key);
+        for (ConfigurationObject<?> section : config.sections) {
+            if (section instanceof ConfigurationObject<?> && section.values.get(key) instanceof Boolean) {
+                return (boolean) section.values.get(key);
+            }
+        }
+        return false; // Default to false if key not found
+    }
+
+    // Suppressing unchecked cast warning because the instanceof check ensures the cast is safe
+    @SuppressWarnings("unchecked")
+    public static void setBoolean(String key, boolean value) {
+        for (ConfigurationObject<?> section : config.sections) {
+            if (section instanceof ConfigurationObject<?> && section.values.get(key) instanceof Boolean) {
+                ((ConfigurationObject<Boolean>)section).values.put(key, value);
+            }
         }
     }
-    return false; // Default to false if key not found
-}
 
     private static File getConfigFile() {
         return new File(FabricLoader.getInstance().getConfigDir().toFile(), "villager-pickup.json");
     }
 
+    public static void saveConfig() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        try {
+            FileWriter writer = new FileWriter(getConfigFile());
+            writer.write(gson.toJson(config));
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
 
 class Configuration {
