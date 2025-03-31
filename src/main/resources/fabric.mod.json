@@ -3,7 +3,7 @@
 	"id": "villager-pickup",
 	"version": "${version}",
 	"name": "Villager Pickup",
-	"description": "Pick up and carry villagers with ease! Now with support for 1.21.4!",
+	"description": "Pick up and carry villagers with ease!",
 	"authors": [
 		"LivingLemming",
 		"GunnableScum"
