@@ -30,7 +30,7 @@ public class ConfigurationScreenHandler extends GenericContainerScreenHandler {
         ItemStack[] content = new ItemStack[27];
         // Fill container with barrier blocks
         for (int i = 0; i < content.length; i++) {
-            content[i] = Items.LIGHT_GRAY_STAINED_GLASS.getDefaultStack();
+            content[i] = Items.LIGHT_GRAY_STAINED_GLASS_PANE.getDefaultStack();
             ComponentChanges.Builder changes = ComponentChanges.builder();
             changes.add(DataComponentTypes.CUSTOM_NAME, Text.of(""));
             content[i].applyChanges(changes.build());
