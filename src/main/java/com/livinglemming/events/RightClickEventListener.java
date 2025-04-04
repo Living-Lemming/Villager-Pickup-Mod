@@ -44,13 +44,13 @@ public class RightClickEventListener {
                     NbtComponent entityData = NbtComponent.of(nbt);
 
                     Text healthText = createHealthText(villager.getHealth(), villager.getMaxHealth());
-                    Text professionText = createLoreText("Profession: [" + villager.getVillagerData().getProfession() + "]");
+                    Text professionText = createLoreText("Profession: [" + villager.getVillagerData().profession().getIdAsString() + "]");
 
                     List<Text> lore = new java.util.ArrayList<>(List.of(healthText, professionText));
 
                     // Add Level to lore if applicable
-                    if(villager.getVillagerData().getLevel() > 1) {
-                        lore.add(createLoreText("Level: [" + villager.getVillagerData().getLevel() + "]"));
+                    if(villager.getVillagerData().level() > 1) {
+                        lore.add(createLoreText("Level: [" + villager.getVillagerData().level() + "]"));
                     }
 
                     TradeOfferList list = villager.getOffers();
