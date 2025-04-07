@@ -5,15 +5,15 @@ import live.gunnablescum.configuration.ConfigurationHandler;
 import live.gunnablescum.configuration.ConfigurationScreenHandler;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleMenuProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static net.minecraft.server.command.CommandManager.literal;
+import static net.minecraft.commands.Commands.literal;
 
 public class VillagerPickup implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("villager-pickup");
@@ -28,23 +28,23 @@ public class VillagerPickup implements ModInitializer {
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated, environment) -> {
 			dispatcher.register(literal("villager-pickup")
 					.then(literal("status").executes(context -> {
-						context.getSource().sendMessage(Text.literal("Villager-Pickup Status:").fillStyle(Style.EMPTY.withFormatting(Formatting.GOLD)));
-						context.getSource().sendMessage(getStatusOfBool("enable_villager_pickup", "Villager Pickup"));
-						context.getSource().sendMessage(getStatusOfBool("allow_villager_rename_with_anvil", "Villager Anvil Renaming"));
+						context.getSource().sendSystemMessage(Component.literal("Villager-Pickup Status:").withStyle(Style.EMPTY.applyFormat(ChatFormatting.GOLD)));
+						context.getSource().sendSystemMessage(getStatusOfBool("enable_villager_pickup", "Villager Pickup"));
+						context.getSource().sendSystemMessage(getStatusOfBool("allow_villager_rename_with_anvil", "Villager Anvil Renaming"));
 						return 1;
 					}))
-					.then(literal("reload").requires(source -> source.hasPermissionLevel(4)).executes(context -> {
+					.then(literal("reload").requires(source -> source.hasPermission(4)).executes(context -> {
 						ConfigurationHandler.reloadConfig();
-						context.getSource().sendFeedback(() -> Text.literal("Config Reload successful.").fillStyle(Style.EMPTY.withFormatting(Formatting.GREEN)), true);
+						context.getSource().sendSuccess(() -> Component.literal("Config Reload successful.").withStyle(Style.EMPTY.applyFormat(ChatFormatting.GREEN)), true);
 						return 1;
 					}))
-					.then(literal("config-gui").requires(source -> source.hasPermissionLevel(4)).executes(context -> {
-						if(context.getSource().isExecutedByPlayer()) {
-							ServerPlayerEntity player = context.getSource().getPlayer();
-							context.getSource().sendFeedback(() -> Text.literal("Editing Villager-Pickup Config...").fillStyle(Style.EMPTY.withFormatting(Formatting.GRAY)), true);
-							player.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, playerInventory, playerEntity) -> new ConfigurationScreenHandler(syncId, playerInventory), Text.literal("Villager-Pickup Config")));
+					.then(literal("config-gui").requires(source -> source.hasPermission(4)).executes(context -> {
+						if(context.getSource().isPlayer()) {
+							ServerPlayer player = context.getSource().getPlayer();
+							context.getSource().sendSuccess(() -> Component.literal("Editing Villager-Pickup Config...").withStyle(Style.EMPTY.applyFormat(ChatFormatting.GRAY)), true);
+							player.openMenu(new SimpleMenuProvider((syncId, playerInventory, playerEntity) -> new ConfigurationScreenHandler(syncId, playerInventory), Component.literal("Villager-Pickup Config")));
 						} else {
-							context.getSource().sendFeedback(() -> Text.literal("This command can only be executed by a player.").fillStyle(Style.EMPTY.withFormatting(Formatting.RED)), false);
+							context.getSource().sendSuccess(() -> Component.literal("This command can only be executed by a player.").withStyle(Style.EMPTY.applyFormat(ChatFormatting.RED)), false);
 							return 0;
 						}
 						return 1;
@@ -53,9 +53,9 @@ public class VillagerPickup implements ModInitializer {
 		});
 	}
 
-	private Text getStatusOfBool(String key, String displayName) {
+	private Component getStatusOfBool(String key, String displayName) {
 		boolean value = ConfigurationHandler.getBoolean(key);
-		return Text.literal(displayName + ": ").fillStyle(Style.EMPTY.withFormatting(value ? Formatting.GREEN : Formatting.RED)).append(Text.literal(value ? "Enabled" : "Disabled"));
+		return Component.literal(displayName + ": ").withStyle(Style.EMPTY.applyFormat(value ? ChatFormatting.GREEN : ChatFormatting.RED)).append(Component.literal(value ? "Enabled" : "Disabled"));
 	}
 
 }

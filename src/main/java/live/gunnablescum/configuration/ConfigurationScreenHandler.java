@@ -1,27 +1,27 @@
 package live.gunnablescum.configuration;
 
-import net.minecraft.component.ComponentChanges;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.screen.GenericContainerScreenHandler;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemLore;
 
-public class ConfigurationScreenHandler extends GenericContainerScreenHandler {
+public class ConfigurationScreenHandler extends ChestMenu {
 
-    public ConfigurationScreenHandler(int syncId, PlayerInventory playerInventory) {
-        super(ScreenHandlerType.GENERIC_9X3, syncId, playerInventory, 3);
+    public ConfigurationScreenHandler(int syncId, Inventory playerInventory) {
+        super(MenuType.GENERIC_9x3, syncId, playerInventory, new SimpleContainer(9 * 3), 3);
         updateInventory();
     }
 
@@ -30,67 +30,67 @@ public class ConfigurationScreenHandler extends GenericContainerScreenHandler {
         ItemStack[] content = new ItemStack[27];
         // Fill container with barrier blocks
         for (int i = 0; i < content.length; i++) {
-            content[i] = Items.LIGHT_GRAY_STAINED_GLASS_PANE.getDefaultStack();
-            ComponentChanges.Builder changes = ComponentChanges.builder();
-            changes.add(DataComponentTypes.CUSTOM_NAME, Text.of(""));
-            content[i].applyChanges(changes.build());
+            content[i] = Items.LIGHT_GRAY_STAINED_GLASS_PANE.getDefaultInstance();
+            DataComponentPatch.Builder changes = DataComponentPatch.builder();
+            changes.set(DataComponents.CUSTOM_NAME, Component.nullToEmpty(""));
+            content[i].applyComponentsAndValidate(changes.build());
         }
-        content[11] = Items.VILLAGER_SPAWN_EGG.getDefaultStack();
-        ComponentChanges.Builder changes = ComponentChanges.builder();
-        changes.add(DataComponentTypes.ITEM_NAME, Text.literal("Villager Pickup").formatted(Formatting.GOLD));
-        changes.add(DataComponentTypes.LORE, new LoreComponent(
+        content[11] = Items.VILLAGER_SPAWN_EGG.getDefaultInstance();
+        DataComponentPatch.Builder changes = DataComponentPatch.builder();
+        changes.set(DataComponents.ITEM_NAME, Component.literal("Villager Pickup").withStyle(ChatFormatting.GOLD));
+        changes.set(DataComponents.LORE, new ItemLore(
                 getStatusLore(
                         ConfigurationHandler.getBoolean("enable_villager_pickup"),
                         "Toggle this option to enable or disable Villager Pickup."
                 )
         ));
-        content[11].applyChanges(changes.build());
+        content[11].applyComponentsAndValidate(changes.build());
 
-        content[15] = Items.ANVIL.getDefaultStack();
-        changes = ComponentChanges.builder();
-        changes.add(DataComponentTypes.ITEM_NAME, Text.literal("Allow Villager Rename with Anvil").formatted(Formatting.GOLD));
-        changes.add(DataComponentTypes.LORE, new LoreComponent(
+        content[15] = Items.ANVIL.getDefaultInstance();
+        changes = DataComponentPatch.builder();
+        changes.set(DataComponents.ITEM_NAME, Component.literal("Allow Villager Rename with Anvil").withStyle(ChatFormatting.GOLD));
+        changes.set(DataComponents.LORE, new ItemLore(
                 getStatusLore(
                         ConfigurationHandler.getBoolean("allow_villager_rename_with_anvil"),
                         "Toggle this option to enable or disable",
                         "renaming Villagers in an Anvil."
                 )
         ));
-        content[15].applyChanges(changes.build());
+        content[15].applyComponentsAndValidate(changes.build());
 
         for(int i = 0; i < content.length; i++) {
-            this.slots.get(i).setStack(content[i]);
+            this.slots.get(i).setByPlayer(content[i]);
         }
     }
 
-    private List<Text> getStatusLore(boolean status, String... loreText) {
-        List<Text> lore = new ArrayList<>();
+    private List<Component> getStatusLore(boolean status, String... loreText) {
+        List<Component> lore = new ArrayList<>();
         for(String str : loreText) {
-            lore.add(Text.literal(str).formatted(Formatting.GRAY));
+            lore.add(Component.literal(str).withStyle(ChatFormatting.GRAY));
         }
 
-        lore.add(Text.literal("Status:").formatted(Formatting.GRAY));
-        MutableText enabled = Text.literal("Enabled").formatted(Formatting.GREEN);
-        enabled.fillStyle(enabled.getStyle().withUnderline(status));
+        lore.add(Component.literal("Status:").withStyle(ChatFormatting.GRAY));
+        MutableComponent enabled = Component.literal("Enabled").withStyle(ChatFormatting.GREEN);
+        enabled.withStyle(enabled.getStyle().withUnderlined(status));
         lore.add(enabled);
 
-        MutableText disabled = Text.literal("Disabled").formatted(Formatting.RED);
-        disabled.fillStyle(disabled.getStyle().withUnderline(!status));
+        MutableComponent disabled = Component.literal("Disabled").withStyle(ChatFormatting.RED);
+        disabled.withStyle(disabled.getStyle().withUnderlined(!status));
         lore.add(disabled);
 
         return lore;
     }
 
     @Override
-    public void onClosed(PlayerEntity player) {
-        for(PlayerEntity operator : player.getServer().getPlayerManager().getPlayerList()) {
-            if(operator.getPermissionLevel() != 4) continue;
-            operator.sendMessage(
-                    Text.literal("[")
+    public void removed(Player player) {
+        for(Player operator : player.getServer().getPlayerList().getPlayers()) {
+            if(!operator.hasPermissions(4)) continue;
+            operator.displayClientMessage(
+                    Component.literal("[")
                             .append(player.getDisplayName())
                             .append(": Changed Villager-Pickup Config]")
-                            .fillStyle(Style.EMPTY
-                                    .withFormatting(Formatting.GRAY)
+                            .withStyle(Style.EMPTY
+                                    .applyFormat(ChatFormatting.GRAY)
                                     .withItalic(true)
                             ),
                     false
@@ -98,13 +98,13 @@ public class ConfigurationScreenHandler extends GenericContainerScreenHandler {
         }
 
         ConfigurationHandler.saveConfig();
-        super.onClosed(player);
+        super.removed(player);
     }
 
     @Override
-    public void onSlotClick(int slotId, int button, SlotActionType actionType, PlayerEntity player) {
+    public void clicked(int slotId, int button, ClickType actionType, Player player) {
         // Edge case - Player gets deopped while in the config screen
-        if(player.getPermissionLevel() != 4) {
+        if(!player.hasPermissions(4)) {
             return;
         }
 
