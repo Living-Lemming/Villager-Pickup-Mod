@@ -120,13 +120,13 @@ public class RightClickEventListener {
 
     private static Text createHealthText(float health, float maxHealth) {
         char fullHeart = '❤';
-        char damagedHeart = '❥';
+        String damagedHeart = "\uD83D\uDC94";
 
         int fullHearts = (int) Math.floor(health);
         int halfHearts = (int) Math.ceil(health - fullHearts);
 
         MutableText fullHeartText = Text.literal(String.valueOf(fullHeart).repeat(fullHearts)).withColor(0xFF0000);
-        MutableText halfHeartText = Text.literal(String.valueOf(damagedHeart).repeat(halfHearts)).withColor(0xFF0000);
+        MutableText halfHeartText = Text.literal(damagedHeart.repeat(halfHearts)).withColor(0xFF0000);
         MutableText missingHeartText = Text.literal(String.valueOf(fullHeart).repeat((int) Math.ceil(maxHealth - health))).withColor(0x808080);
 
         return createLoreText("Health: ").append(fullHeartText).append(halfHeartText).append(missingHeartText);
