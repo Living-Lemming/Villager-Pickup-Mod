@@ -36,6 +36,8 @@ public class RightClickEventListener {
                 NbtCompound nbt = new NbtCompound();
                 villager.writeCustomDataToNbt(nbt);
 
+                if(nbt.contains("sleeping_pos")) nbt.remove("sleeping_pos");
+
                 Item spawnEgg = SpawnEggItem.forEntity(villager.getType());
                 if (spawnEgg != null) {
                     ItemStack spawnEggStack = new ItemStack(spawnEgg);
