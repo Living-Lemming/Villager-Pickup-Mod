@@ -10,6 +10,7 @@ import net.minecraft.item.Items;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -83,19 +84,22 @@ public class ConfigurationScreenHandler extends GenericContainerScreenHandler {
 
     @Override
     public void onClosed(PlayerEntity player) {
-        for(PlayerEntity operator : player.getServer().getPlayerManager().getPlayerList()) {
-            if(operator.getPermissionLevel() != 4) continue;
-            operator.sendMessage(
-                    Text.literal("[")
-                            .append(player.getDisplayName())
-                            .append(": Changed Villager-Pickup Config]")
-                            .fillStyle(Style.EMPTY
-                                    .withFormatting(Formatting.GRAY)
-                                    .withItalic(true)
-                            ),
-                    false
-            );
+        if(player instanceof ServerPlayerEntity serverPlayer) {
+            for(PlayerEntity operator : serverPlayer.getEntityWorld().getServer().getPlayerManager().getPlayerList()) {
+                if(operator.getPermissionLevel() != 4) continue;
+                operator.sendMessage(
+                        Text.literal("[")
+                                .append(player.getDisplayName())
+                                .append(": Changed Villager-Pickup Config]")
+                                .fillStyle(Style.EMPTY
+                                        .withFormatting(Formatting.GRAY)
+                                        .withItalic(true)
+                                ),
+                        false
+                );
+            }
         }
+
 
         ConfigurationHandler.saveConfig();
         super.onClosed(player);

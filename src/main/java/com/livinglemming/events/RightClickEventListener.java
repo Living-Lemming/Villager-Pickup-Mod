@@ -7,18 +7,19 @@ import net.minecraft.block.Blocks;
 import net.minecraft.component.ComponentChanges;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.TypedEntityData;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SpawnEggItem;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtString;
+import net.minecraft.storage.NbtWriteView;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.ErrorReporter;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOfferList;
 import net.minecraft.village.TradedItem;
@@ -30,20 +31,20 @@ import java.util.Optional;
 public class RightClickEventListener {
     public static void registerRightClickEvent() {
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
-            if(world.isClient) return ActionResult.PASS;
+            if(world.isClient()) return ActionResult.PASS;
+            if(!player.isSneaking() && player.getStackInHand(hand).getItem() == Items.VILLAGER_SPAWN_EGG) return ActionResult.FAIL; // Fix for #26
             if(!ConfigurationHandler.getBoolean("enable_villager_pickup")) return ActionResult.PASS;
             if (player.isSneaking() && entity instanceof VillagerEntity villager) {
-                NbtCompound nbt = new NbtCompound();
-                villager.writeCustomDataToNbt(nbt);
+                NbtWriteView nbt = NbtWriteView.create(ErrorReporter.EMPTY, villager.getEntityWorld().getRegistryManager());
+                villager.writeCustomData(nbt);
 
-                if(nbt.contains("sleeping_pos")) nbt.remove("sleeping_pos");
+                if(nbt.get("sleeping_pos") != null) nbt.remove("sleeping_pos");
 
                 Item spawnEgg = SpawnEggItem.forEntity(villager.getType());
                 if (spawnEgg != null) {
                     ItemStack spawnEggStack = new ItemStack(spawnEgg);
 
-                    nbt.put("id", NbtString.of("minecraft:villager"));
-                    NbtComponent entityData = NbtComponent.of(nbt);
+                    nbt.putString("id", "minecraft:villager");
 
                     Text healthText = createHealthText(villager.getHealth(), villager.getMaxHealth());
                     Text professionText = createLoreText("Profession: [" + villager.getVillagerData().profession().getIdAsString() + "]");
@@ -66,7 +67,7 @@ public class RightClickEventListener {
                     LoreComponent loreData = new LoreComponent(lore);
 
                     ComponentChanges.Builder changes = ComponentChanges.builder()
-                            .add(DataComponentTypes.ENTITY_DATA, entityData)
+                            .add(DataComponentTypes.ENTITY_DATA, TypedEntityData.create(EntityType.VILLAGER, nbt.getNbt()))
                             .add(DataComponentTypes.LORE, loreData);
 
                     if(villager.hasCustomName()) {
