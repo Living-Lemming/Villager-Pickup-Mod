@@ -1,0 +1,234 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:custom_model_data",
+    "cases": [
+      {
+        "when": "minecraft:none",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/villager_spawn_egg"
+        }
+      },
+      {
+        "when": "minecraft:armorer",
+        "model": {
+          "type": "minecraft:composite",
+          "models": [
+            {
+              "type": "minecraft:model",
+              "model": "minecraft:item/villager_spawn_egg"
+            },
+            {
+              "type": "minecraft:model",
+              "model": "villagerpickup:item/villager_spawn_egg_armorer"
+            }
+          ]
+        }
+      },
+      {
+        "when": "minecraft:butcher",
+        "model": {
+          "type": "minecraft:composite",
+          "models": [
+            {
+              "type": "minecraft:model",
+              "model": "minecraft:item/villager_spawn_egg"
+            },
+            {
+              "type": "minecraft:model",
+              "model": "villagerpickup:item/villager_spawn_egg_butcher"
+            }
+          ]
+        }
+      },
+      {
+        "when": "minecraft:cartographer",
+        "model": {
+          "type": "minecraft:composite",
+          "models": [
+            {
+              "type": "minecraft:model",
+              "model": "minecraft:item/villager_spawn_egg"
+            },
+            {
+              "type": "minecraft:model",
+              "model": "villagerpickup:item/villager_spawn_egg_cartographer"
+            }
+          ]
+        }
+      },
+      {
+        "when": "minecraft:cleric",
+        "model": {
+          "type": "minecraft:composite",
+          "models": [
+            {
+              "type": "minecraft:model",
+              "model": "minecraft:item/villager_spawn_egg"
+            },
+            {
+              "type": "minecraft:model",
+              "model": "villagerpickup:item/villager_spawn_egg_cleric"
+            }
+          ]
+        }
+      },
+      {
+        "when": "minecraft:farmer",
+        "model": {
+        "type": "minecraft:composite",
+        "models": [
+          {
+            "type": "minecraft:model",
+            "model": "minecraft:item/villager_spawn_egg"
+          },
+          {
+            "type": "minecraft:model",
+            "model": "villagerpickup:item/villager_spawn_egg_farmer"
+          }
+          ]
+        }
+      },
+      {
+        "when": "minecraft:fisherman",
+        "model": {
+          "type": "minecraft:composite",
+          "models": [
+            {
+              "type": "minecraft:model",
+              "model": "minecraft:item/villager_spawn_egg"
+            },
+            {
+              "type": "minecraft:model",
+              "model": "villagerpickup:item/villager_spawn_egg_fisherman"
+            }
+          ]
+        }
+      },
+      {
+        "when": "minecraft:fletcher",
+        "model": {
+          "type": "minecraft:composite",
+          "models": [
+            {
+              "type": "minecraft:model",
+              "model": "minecraft:item/villager_spawn_egg"
+            },
+            {
+              "type": "minecraft:model",
+              "model": "villagerpickup:item/villager_spawn_egg_fletcher"
+            }
+          ]
+        }
+      },
+      {
+        "when": "minecraft:leatherworker",
+        "model": {
+          "type": "minecraft:composite",
+          "models": [
+            {
+              "type": "minecraft:model",
+              "model": "minecraft:item/villager_spawn_egg"
+            },
+            {
+              "type": "minecraft:model",
+              "model": "villagerpickup:item/villager_spawn_egg_leatherworker"
+            }
+          ]
+        }
+      },
+      {
+        "when": "minecraft:librarian",
+        "model": {
+          "type": "minecraft:composite",
+          "models": [
+            {
+              "type": "minecraft:model",
+              "model": "minecraft:item/villager_spawn_egg"
+            },
+            {
+              "type": "minecraft:model",
+              "model": "villagerpickup:item/villager_spawn_egg_librarian"
+            }
+          ]
+        }
+      },
+      {
+        "when": "minecraft:mason",
+        "model": {
+          "type": "minecraft:composite",
+          "models": [
+            {
+              "type": "minecraft:model",
+              "model": "minecraft:item/villager_spawn_egg"
+            },
+            {
+              "type": "minecraft:model",
+              "model": "villagerpickup:item/villager_spawn_egg_mason"
+            }
+          ]
+        }
+      },
+      {
+        "when": "minecraft:nitwit",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/villager_spawn_egg"
+        }
+      },
+      {
+        "when": "minecraft:shepherd",
+        "model": {
+          "type": "minecraft:composite",
+          "models": [
+            {
+              "type": "minecraft:model",
+              "model": "minecraft:item/villager_spawn_egg"
+            },
+            {
+              "type": "minecraft:model",
+              "model": "villagerpickup:item/villager_spawn_egg_shepherd"
+            }
+          ]
+        }
+      },
+      {
+        "when": "minecraft:toolsmith",
+        "model": {
+          "type": "minecraft:composite",
+          "models": [
+            {
+              "type": "minecraft:model",
+              "model": "minecraft:item/villager_spawn_egg"
+            },
+            {
+              "type": "minecraft:model",
+              "model": "villagerpickup:item/villager_spawn_egg_toolsmith"
+            }
+          ]
+        }
+      },
+      {
+        "when": "minecraft:weaponsmith",
+        "model": {
+          "type": "minecraft:composite",
+          "models": [
+            {
+              "type": "minecraft:model",
+              "model": "minecraft:item/villager_spawn_egg"
+            },
+            {
+              "type": "minecraft:model",
+              "model": "villagerpickup:item/villager_spawn_egg_weaponsmith"
+            }
+          ]
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "minecraft:item/villager_spawn_egg"
+    }
+  }
+}

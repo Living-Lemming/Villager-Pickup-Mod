@@ -17,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.TypedEntityData;
 import net.minecraft.world.item.trading.ItemCost;
@@ -78,6 +79,13 @@ public class CommonClass {
         if(villager.hasCustomName()) {
             changes.set(DataComponents.CUSTOM_NAME, villager.getCustomName());
         }
+
+        changes.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(
+                List.of(),
+                List.of(),
+                List.of(villager.getVillagerData().profession().getRegisteredName()),
+                List.of()
+        ));
 
         spawnEggStack.applyComponentsAndValidate(changes.build());
 
