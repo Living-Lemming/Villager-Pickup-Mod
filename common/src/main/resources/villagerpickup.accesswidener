@@ -1,0 +1,3 @@
+accessWidener v2 named
+accessible field net/minecraft/world/inventory/ItemCombinerMenu inputSlots Lnet/minecraft/world/Container;
+accessible method net/minecraft/world/entity/npc/Villager addAdditionalSaveData (Lnet/minecraft/world/level/storage/ValueOutput;)V
