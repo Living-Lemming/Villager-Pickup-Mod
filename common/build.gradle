@@ -4,15 +4,15 @@ plugins {
 }
 
 neoForge {
-    neoFormVersion = neo_form_version
+    neoFormVersion = rootProject.props.neo_form_ver
     // Automatically enable AccessTransformers if the file exists
     def at = file('src/main/resources/META-INF/accesstransformer.cfg')
     if (at.exists()) {
         accessTransformers.from(at.absolutePath)
     }
     parchment {
-        minecraftVersion = parchment_minecraft
-        mappingsVersion = parchment_version
+        minecraftVersion = rootProject.props.parchment_mc
+        mappingsVersion = rootProject.props.parchment_ver
     }
 }
 

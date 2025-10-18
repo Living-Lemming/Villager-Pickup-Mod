@@ -3,13 +3,13 @@ plugins {
     id 'fabric-loom'
 }
 dependencies {
-    minecraft "com.mojang:minecraft:${minecraft_version}"
+    minecraft "com.mojang:minecraft:${rootProject.minecraft}"
     mappings loom.layered {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${parchment_minecraft}:${parchment_version}@zip")
+        parchment("org.parchmentmc.data:parchment-${rootProject.props.parchment_mc}:${rootProject.props.parchment_ver}@zip")
     }
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.props.fabric_api}+${rootProject.minecraft}"
 }
 
 loom {

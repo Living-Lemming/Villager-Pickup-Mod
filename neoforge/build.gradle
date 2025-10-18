@@ -4,15 +4,15 @@ plugins {
 }
 
 neoForge {
-    version = neoforge_version
+    version = rootProject.props.neoforge_ver
     // Automatically enable neoforge AccessTransformers if the file exists
     def at = project(':common').file('src/main/resources/META-INF/accesstransformer.cfg')
     if (at.exists()) {
         accessTransformers.from(at.absolutePath)
     }
     parchment {
-        minecraftVersion = parchment_minecraft
-        mappingsVersion = parchment_version
+        minecraftVersion = rootProject.props.parchment_mc
+        mappingsVersion = rootProject.props.parchment_ver
     }
     runs {
         configureEach {

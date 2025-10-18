@@ -4,3 +4,37 @@ plugins {
     // see https://projects.neoforged.net/neoforged/moddevgradle for new versions
     id 'net.neoforged.moddev' version '2.0.115' apply false
 }
+
+// groovy
+subprojects {
+    repositories {
+        mavenCentral()
+    }
+
+    afterEvaluate { proj ->
+        if (proj.plugins.hasPlugin('java')) {
+            proj.dependencies {
+                annotationProcessor "systems.manifold:manifold-preprocessor:2025.1.27"
+                compileOnly        "systems.manifold:manifold:2025.1.27"
+            }
+
+            proj.tasks.withType(JavaCompile).configureEach {
+                options.compilerArgs += ["-Xplugin:Manifold"]
+            }
+        }
+    }
+}
+
+project.ext.set("props", new Properties())
+file("props/${rootProject.minecraft}.properties").withInputStream { project.props.load(it) }
+
+println()
+println "Minecraft: ${rootProject.minecraft} (Java ${project.props.java})"
+println " - Parchment: ${project.props.parchment_mc} v${project.props.parchment_ver}"
+println " - Fabric: ${project.props.fabric_api}"
+println " - Forge: ${project.props.forge_ver}"
+println " - NeoForm: ${project.props.neo_form_ver}"
+println " - NeoForge: ${project.props.neoforge_ver}"
+println()
+
+new File(projectDir, "build.properties").text = String.format("MC_%s=\n", rootProject.minecraft.replace(".", "_"))

@@ -4,7 +4,7 @@ plugins {
 }
 
 base {
-    archivesName = "${mod_id}-${project.name}-${minecraft_version}"
+    archivesName = "${mod_id}-${project.name}-${rootProject.props.minecraft}"
 }
 
 java {
@@ -50,7 +50,7 @@ repositories {
     configurations."$variant".outgoing {
         capability("$group:${project.name}:$version")
         capability("$group:${base.archivesName.get()}:$version")
-        capability("$group:$mod_id-${project.name}-${minecraft_version}:$version")
+        capability("$group:$mod_id-${project.name}-${rootProject.minecraft}:$version")
         capability("$group:$mod_id:$version")
     }
     publishing.publications.configureEach {
@@ -77,7 +77,7 @@ jar {
                 'Implementation-Title'  : project.name,
                 'Implementation-Version': project.jar.archiveVersion,
                 'Implementation-Vendor' : mod_authors,
-                'Built-On-Minecraft'    : minecraft_version
+                'Built-On-Minecraft'    : rootProject.minecraft,
         ])
     }
 }
@@ -86,9 +86,9 @@ processResources {
     var expandProps = [
             'version'                      : version,
             'group'                        : project.group, //Else we target the task's group.
-            'minecraft_version'            : minecraft_version,
+            'minecraft'                    : rootProject.minecraft,
             'minecraft_version_range'      : minecraft_version_range,
-            'fabric_version'               : fabric_version,
+            'fabric_version'               : rootProject.props.fabric_api,
             'fabric_loader_version'        : fabric_loader_version,
             'mod_name'                     : mod_name,
             'mod_authors'                  : mod_authors,
@@ -97,10 +97,10 @@ processResources {
             'mod_id'                       : mod_id,
             'license'                      : license,
             'description'                  : project.description,
-            'neoforge_version'             : neoforge_version,
-            'neoforge_loader_version_range': neoforge_loader_version_range,
-            "forge_version": forge_version,
-            "forge_loader_version_range": forge_loader_version_range,
+            'neoforge_version'             : rootProject.props.neoforge_ver,
+            'neoforge_loader_version_range': rootProject.props.neoforge_version_range,
+            "forge_version"                : rootProject.props.forge_ver,
+            "forge_loader_version_range"   : rootProject.props.forge_version_range,
             'credits'                      : credits,
             'java_version'                 : java_version
     ]
