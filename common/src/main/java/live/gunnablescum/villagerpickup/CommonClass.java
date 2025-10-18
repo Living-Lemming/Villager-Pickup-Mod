@@ -19,7 +19,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.component.ItemLore;
-import net.minecraft.world.item.component.TypedEntityData;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
@@ -29,6 +28,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+// Version-Specific imports
+#if MC_1_21_8
+import net.minecraft.world.item.component.CustomData;
+#else
+import net.minecraft.world.item.component.TypedEntityData;
+#endif
 
 public class CommonClass {
 
@@ -72,9 +78,15 @@ public class CommonClass {
 
         ItemLore loreData = new ItemLore(lore);
 
-        DataComponentPatch.Builder changes = DataComponentPatch.builder()
-                .set(DataComponents.ENTITY_DATA, TypedEntityData.of(EntityType.VILLAGER, nbt.buildResult()))
-                .set(DataComponents.LORE, loreData);
+        DataComponentPatch.Builder changes = DataComponentPatch.builder();
+        changes.set(DataComponents.LORE, loreData);
+
+        #if MC_1_21_8
+        nbt.putString("id", "minecraft:villager");
+        changes.set(DataComponents.ENTITY_DATA, CustomData.of(nbt.buildResult()));
+        #else
+        changes.set(DataComponents.ENTITY_DATA, TypedEntityData.of(EntityType.VILLAGER, nbt.buildResult()))
+        #endif
 
         if(villager.hasCustomName()) {
             changes.set(DataComponents.CUSTOM_NAME, villager.getCustomName());

@@ -21,12 +21,6 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public boolean isDevelopmentEnvironment() {
-
-        return !FMLLoader.getCurrent().isProduction();
-    }
-
-    @Override
     public File getConfigDirectory() {
         return net.neoforged.fml.loading.FMLPaths.CONFIGDIR.get().toFile();
     }

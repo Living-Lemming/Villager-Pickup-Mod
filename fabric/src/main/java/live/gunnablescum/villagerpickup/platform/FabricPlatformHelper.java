@@ -20,14 +20,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public boolean isDevelopmentEnvironment() {
-
-        return FabricLoader.getInstance().isDevelopmentEnvironment();
-    }
-
-    @Override
     public File getConfigDirectory() {
-        Constants.LOG.info("Accessing config directory via Fabric API");
         return FabricLoader.getInstance().getConfigDir().toFile();
     }
 }
