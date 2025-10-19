@@ -41,6 +41,7 @@ import net.minecraft.world.item.component.CustomModelData;
 
 #if !PRE_WRITE_VIEW
 import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.util.ProblemReporter;
 #endif
 
 public class CommonClass {

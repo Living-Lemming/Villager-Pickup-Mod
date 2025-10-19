@@ -1,6 +1,9 @@
 package live.gunnablescum.villagerpickup.mixin;
 
 import live.gunnablescum.villagerpickup.CommonClass;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -19,7 +22,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ServerEntityInteractMixin {
 
     @Shadow
-    @Final
     public ServerPlayer player;
 
     @Inject(method = "handleInteract", at = @At("HEAD"), cancellable = true)
@@ -31,7 +33,12 @@ public class ServerEntityInteractMixin {
         #endif
         if(entity == null) return; // We don't care
         if(entity.getType() != EntityType.VILLAGER) return; // PASS
-        if(!player.isCrouching() && player.getUseItem().getItem() == Items.VILLAGER_SPAWN_EGG)
+        ItemStack item = player.getMainHandItem();
+        if (item.isEmpty()) {
+            item = player.getOffhandItem();
+        }
+
+        if(item.getItem() == Items.VILLAGER_SPAWN_EGG && !item.getComponents().get(DataComponents.ENTITY_DATA).copyTagWithoutId().isEmpty()) // Fix for #28
         {
             ci.cancel(); // Fix for #26
             return;

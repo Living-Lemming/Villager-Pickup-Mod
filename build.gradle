@@ -27,7 +27,7 @@ subprojects {
 
 project.ext.set("props", new Properties())
 def mcVer = rootProject.minecraft.toString()
-def propFile = mcVer in ['1.21.1', '1.21.2', '1.21.3', '1.21.4'] ? "1.21" : mcVer
+def propFile = mcVer in ['1.21.1', '1.21.2', '1.21.3', '1.21.4'] ? "1.21" : mcVer in ['1.21.7', '1.21.8', '1.21.9', '1.21.10'] ? "1.21.6" : mcVer
 file("props/${propFile}.properties").withInputStream { project.props.load(it) }
 
 println()
@@ -55,22 +55,18 @@ def currentVer = parseVersion(rootProject.minecraft.toString())
 def targetVer = [1, 21, 9]
 boolean isPreBelow119 = cmpVersion(currentVer, targetVer) < 0
 
-def targetVer2 = [1, 21, 7]
-boolean isPreBelow117 = cmpVersion(currentVer, targetVer2) < 0
+def targetVer2 = [1, 21, 6]
+boolean isPreBelow116 = cmpVersion(currentVer, targetVer2) < 0
 
-def targetVer3 = [1, 21, 6]
-boolean isPreBelow116 = cmpVersion(currentVer, targetVer3) < 0
+def targetVer3 = [1, 21, 5]
+boolean isPreBelow115 = cmpVersion(currentVer, targetVer3) < 0
 
-def targetVer4 = [1, 21, 5]
-boolean isPreBelow115 = cmpVersion(currentVer, targetVer4) < 0
-
-def targetVer5 = [1, 21, 4]
-boolean isPreBelow114 = cmpVersion(currentVer, targetVer5) < 0
+def targetVer4 = [1, 21, 4]
+boolean isPreBelow114 = cmpVersion(currentVer, targetVer4) < 0
 
 def mcFlag = String.format("MC_%s=\n", rootProject.minecraft.replace(".", "_"))
 def preFlag1 = isPreBelow119 ? "PRE_TYPED_ENTITY_DATA=\n" : ""
-def preFlag2 = isPreBelow117 ? "PRE_WRITE_VIEW=\n" : ""
-def preFlag3 = isPreBelow116 ? "PRE_PLAYER_LEVEL_METHOD=\n" : ""
-def preFlag4 = isPreBelow115 ? "PRE_VILLAGERDATA_METHODS=\n" : ""
-def preFlag5 = isPreBelow114 ? "PRE_CUSTOM_TEXTURES=\n" : ""
-new File(projectDir, "build.properties").text = mcFlag + preFlag1 + preFlag2 + preFlag3 + preFlag4 + preFlag5
+def preFlag2 = isPreBelow116 ? "PRE_WRITE_VIEW=\n" : ""
+def preFlag3 = isPreBelow115 ? "PRE_VILLAGERDATA_METHODS=\n" : ""
+def preFlag4 = isPreBelow114 ? "PRE_CUSTOM_TEXTURES=\n" : ""
+new File(projectDir, "build.properties").text = mcFlag + preFlag1 + preFlag2 + preFlag3 + preFlag4

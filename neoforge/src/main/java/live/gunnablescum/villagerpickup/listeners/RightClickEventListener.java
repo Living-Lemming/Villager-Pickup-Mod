@@ -1,9 +1,11 @@
 package live.gunnablescum.villagerpickup.listeners;
 
 import live.gunnablescum.villagerpickup.CommonClass;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -21,9 +23,11 @@ public class RightClickEventListener {
             return;
         }
 
-        if(!player.isCrouching() && player.getItemInHand(hand).getItem() == Items.VILLAGER_SPAWN_EGG) {
-            event.setCancellationResult(InteractionResult.FAIL); // Fix for #26
-            event.setCanceled(true);
+        ItemStack item = player.getItemInHand(hand);
+        if(item.getItem() == Items.VILLAGER_SPAWN_EGG && !item.getComponents().get(DataComponents.ENTITY_DATA).copyTagWithoutId().isEmpty())
+        {
+            event.setCancellationResult(InteractionResult.FAIL);
+            event.setCanceled(true); // Fix for #26
             return;
         }
 
