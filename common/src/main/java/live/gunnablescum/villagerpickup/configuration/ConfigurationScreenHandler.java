@@ -87,7 +87,7 @@ public class ConfigurationScreenHandler extends ChestMenu {
     public void removed(Player player) {
         if(player instanceof ServerPlayer serverPlayer) {
             for(Player operator : serverPlayer.level().getServer().getPlayerList().getPlayers()) {
-                if(operator.getPermissionLevel() != 4) continue;
+                if(!operator.hasPermissions(4)) continue;
                 operator.displayClientMessage(
                         Component.literal("[")
                                 .append(player.getDisplayName())
@@ -109,7 +109,7 @@ public class ConfigurationScreenHandler extends ChestMenu {
     @Override
     public void clicked(int slotId, int button, ClickType actionType, Player player) {
         // Edge case - Player gets deopped while in the config screen
-        if(player.getPermissionLevel() != 4) {
+        if(!player.hasPermissions(4)) {
             return;
         }
 

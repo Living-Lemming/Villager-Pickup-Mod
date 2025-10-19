@@ -7,12 +7,14 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +24,6 @@ import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
-import net.minecraft.world.level.storage.TagValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -30,10 +31,14 @@ import java.util.List;
 import java.util.Optional;
 
 // Version-Specific imports
-#if MC_1_21_8
+#if PRE_TYPED_ENTITY_DATA
 import net.minecraft.world.item.component.CustomData;
 #else
 import net.minecraft.world.item.component.TypedEntityData;
+#endif
+
+#if !PRE_WRITE_VIEW
+import net.minecraft.world.level.storage.TagValueOutput;
 #endif
 
 public class CommonClass {
@@ -48,23 +53,34 @@ public class CommonClass {
         if(!player.isCrouching()) return null;
         if(!ConfigurationHandler.getBoolean("enable_villager_pickup")) return null;
         if(!(entity instanceof Villager villager)) return null;
+        #if PRE_WRITE_VIEW
+        CompoundTag nbt = new CompoundTag();
+        #else
         TagValueOutput nbt = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, villager.level().registryAccess());
+        #endif
+
         villager.addAdditionalSaveData(nbt);
 
+        #if PRE_WRITE_VIEW
+        nbt.remove("sleeping_pos");
+        #else
         nbt.discard("sleeping_pos");
+        #endif
 
         Item spawnEgg = SpawnEggItem.byId(EntityType.VILLAGER);
         if(spawnEgg == null) return null;
         ItemStack spawnEggStack = new ItemStack(spawnEgg);
 
+        VillagerData villagerData = villager.getVillagerData();
+
         Component healthText = createHealthText(villager.getHealth(), villager.getMaxHealth());
-        Component professionText = createLoreText(Component.literal("Profession: [" + villager.getVillagerData().profession().getRegisteredName() + "]"));
+        Component professionText = createLoreText(Component.literal("Profession: [" + getVillagerProfession(villagerData) + "]"));
 
         List<Component> lore = new ArrayList<>(List.of(healthText, professionText));
 
         // Add Level to lore if applicable
-        if(villager.getVillagerData().level() > 1) {
-            lore.add(createLoreText(Component.literal("Level: [" + villager.getVillagerData().level() + "]")));
+        if(getVillagerLevel(villagerData) > 1) {
+            lore.add(createLoreText(Component.literal("Level: [" + getVillagerLevel(villagerData) + "]")));
         }
 
         MerchantOffers list = villager.getOffers();
@@ -81,9 +97,13 @@ public class CommonClass {
         DataComponentPatch.Builder changes = DataComponentPatch.builder();
         changes.set(DataComponents.LORE, loreData);
 
-        #if MC_1_21_8
+        #if PRE_TYPED_ENTITY_DATA
         nbt.putString("id", "minecraft:villager");
+            #if PRE_WRITE_VIEW
+        changes.set(DataComponents.ENTITY_DATA, CustomData.of(nbt));
+            #else
         changes.set(DataComponents.ENTITY_DATA, CustomData.of(nbt.buildResult()));
+            #endif
         #else
         changes.set(DataComponents.ENTITY_DATA, TypedEntityData.of(EntityType.VILLAGER, nbt.buildResult()))
         #endif
@@ -92,12 +112,14 @@ public class CommonClass {
             changes.set(DataComponents.CUSTOM_NAME, villager.getCustomName());
         }
 
+        #if !PRE_CUSTOM_TEXTURES
         changes.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(
                 List.of(),
                 List.of(),
-                List.of(villager.getVillagerData().profession().getRegisteredName()),
+                List.of(getVillagerProfession(villagerData)),
                 List.of()
         ));
+        #endif
 
         spawnEggStack.applyComponentsAndValidate(changes.build());
 
@@ -139,5 +161,21 @@ public class CommonClass {
     public static Component getStatusOfBool(String key, String displayName) {
         boolean value = ConfigurationHandler.getBoolean(key);
         return Component.literal(displayName + ": " + value).withStyle(value ? ChatFormatting.GREEN : ChatFormatting.RED).append(Component.literal(value ? "Enabled" : "Disabled"));
+    }
+
+    public static int getVillagerLevel(VillagerData data) {
+        #if PRE_VILLAGERDATA_METHODS
+        return data.getLevel();
+        #else
+        return data.level();
+        #endif
+    }
+
+    public static String getVillagerProfession(VillagerData data) {
+        #if PRE_VILLAGERDATA_METHODS
+        return data.getProfession().name();
+        #else
+        return data.profession().getRegisteredName();
+        #endif
     }
 }

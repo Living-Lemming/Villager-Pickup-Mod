@@ -37,4 +37,34 @@ println " - NeoForm: ${project.props.neo_form_ver}"
 println " - NeoForge: ${project.props.neoforge_ver}"
 println()
 
-new File(projectDir, "build.properties").text = String.format("MC_%s=\n", rootProject.minecraft.replace(".", "_"))
+def parseVersion = { String v -> v.tokenize('.').collect { it.isInteger() ? it.toInteger() : 0 } }
+def cmpVersion = { List a, List b ->
+    int len = Math.max(a.size(), b.size())
+    for (int i = 0; i < len; i++) {
+        int ai = i < a.size() ? a[i] : 0
+        int bi = i < b.size() ? b[i] : 0
+        if (ai < bi) return -1
+        if (ai > bi) return 1
+    }
+    return 0
+}
+
+def currentVer = parseVersion(rootProject.minecraft.toString())
+def targetVer = [1, 21, 9]
+boolean isPreBelow119 = cmpVersion(currentVer, targetVer) < 0
+
+def targetVer2 = [1, 21, 6]
+boolean isPreBelow116 = cmpVersion(currentVer, targetVer2) < 0
+
+def targetVer3 = [1, 21, 5]
+boolean isPreBelow115 = cmpVersion(currentVer, targetVer3) < 0
+
+def targetVer4 = [1, 21, 4]
+boolean isPreBelow114 = cmpVersion(currentVer, targetVer4) < 0
+
+def mcFlag = String.format("MC_%s=\n", rootProject.minecraft.replace(".", "_"))
+def preFlag1 = isPreBelow119 ? "PRE_TYPED_ENTITY_DATA=\n" : ""
+def preFlag2 = isPreBelow116 ? "PRE_WRITE_VIEW=\n" : ""
+def preFlag3 = isPreBelow115 ? "PRE_VILLAGERDATA_METHODS=\n" : ""
+def preFlag4 = isPreBelow114 ? "PRE_CUSTOM_TEXTURES=\n" : ""
+new File(projectDir, "build.properties").text = mcFlag + preFlag1 + preFlag2 + preFlag3 + preFlag4

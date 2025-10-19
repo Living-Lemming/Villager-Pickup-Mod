@@ -87,7 +87,7 @@ processResources {
             'version'                      : version,
             'group'                        : project.group, //Else we target the task's group.
             'minecraft'                    : rootProject.minecraft,
-            'minecraft_version_range'      : minecraft_version_range,
+            'minecraft_version_range'      : rootProject.props.minecraft_version_range,
             'fabric_version'               : rootProject.props.fabric_api,
             'fabric_loader_version'        : fabric_loader_version,
             'mod_name'                     : mod_name,
