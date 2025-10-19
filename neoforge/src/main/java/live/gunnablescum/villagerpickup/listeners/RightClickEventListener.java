@@ -24,11 +24,19 @@ public class RightClickEventListener {
         }
 
         ItemStack item = player.getItemInHand(hand);
-        if(item.getItem() == Items.VILLAGER_SPAWN_EGG && !item.getComponents().get(DataComponents.ENTITY_DATA).copyTagWithoutId().isEmpty())
+        if(item.getItem() == Items.VILLAGER_SPAWN_EGG)
         {
-            event.setCancellationResult(InteractionResult.FAIL);
-            event.setCanceled(true); // Fix for #26
-            return;
+            boolean cond;
+            #if PRE_TYPED_ENTITY_DATA
+            cond = item.getComponents().get(DataComponents.ENTITY_DATA) != null;
+            #else
+            cond = !item.getComponents().get(DataComponents.ENTITY_DATA).copyTagWithoutId().isEmpty();
+            #endif
+            if(cond) {
+                event.setCancellationResult(InteractionResult.FAIL);
+                event.setCanceled(true); // Fix for #26
+                return;
+            }
         }
 
         var spawnEgg = CommonClass.convertVillagerToItemStack(player, entity);

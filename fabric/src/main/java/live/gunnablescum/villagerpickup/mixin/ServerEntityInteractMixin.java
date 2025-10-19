@@ -3,6 +3,7 @@ package live.gunnablescum.villagerpickup.mixin;
 import live.gunnablescum.villagerpickup.CommonClass;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.Entity;
@@ -24,7 +25,7 @@ public class ServerEntityInteractMixin {
     @Inject(method = "handleInteract", at = @At("HEAD"), cancellable = true)
     public void onPlayerInteract(ServerboundInteractPacket packet, CallbackInfo ci) {
         #if !PRE_PLAYER_LEVEL_METHOD
-        Entity entity = packet.getTarget(player.level());
+        Entity entity = packet.getTarget((ServerLevel)player.level());
         #else
         Entity entity = packet.getTarget(player.serverLevel());
         #endif
@@ -35,10 +36,21 @@ public class ServerEntityInteractMixin {
             item = player.getOffhandItem();
         }
 
-        if(item.getItem() == Items.VILLAGER_SPAWN_EGG && !item.getComponents().get(DataComponents.ENTITY_DATA).copyTagWithoutId().isEmpty()) // Fix for #28
+
+
+        if(item.getItem() == Items.VILLAGER_SPAWN_EGG)
         {
-            ci.cancel(); // Fix for #26
-            return;
+            boolean cond;
+            #if PRE_TYPED_ENTITY_DATA
+            cond = item.getComponents().get(DataComponents.ENTITY_DATA) != null;
+            #else
+            cond = !item.getComponents().get(DataComponents.ENTITY_DATA).copyTagWithoutId().isEmpty();
+            #endif
+
+            if (cond) { // Fix for #28
+                ci.cancel(); // Fix for #26
+                return;
+            }
         }
 
         ItemStack spawnEgg = CommonClass.convertVillagerToItemStack(player, entity);
