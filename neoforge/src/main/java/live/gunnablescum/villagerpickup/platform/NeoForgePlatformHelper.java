@@ -2,7 +2,6 @@ package live.gunnablescum.villagerpickup.platform;
 
 import live.gunnablescum.villagerpickup.platform.services.IPlatformHelper;
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.loading.FMLLoader;
 
 import java.io.File;
 
