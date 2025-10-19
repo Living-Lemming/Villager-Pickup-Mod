@@ -1,0 +1,8 @@
+{
+  "parent": "villagerpickup.mixins.json",
+  "package": "live.gunnablescum.villagerpickup.mixin",
+  "mixins": [
+    "CommandManagerMixin",
+    "ServerEntityInteractMixin"
+  ]
+}

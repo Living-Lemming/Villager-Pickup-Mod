@@ -31,7 +31,6 @@ file("props/${rootProject.minecraft}.properties").withInputStream { project.prop
 println()
 println "Minecraft: ${rootProject.minecraft} (Java ${project.props.java})"
 println " - Parchment: ${project.props.parchment_mc} v${project.props.parchment_ver}"
-println " - Fabric: ${project.props.fabric_api}"
 println " - Forge: ${project.props.forge_ver}"
 println " - NeoForm: ${project.props.neo_form_ver}"
 println " - NeoForge: ${project.props.neoforge_ver}"

@@ -9,7 +9,6 @@ dependencies {
         parchment("org.parchmentmc.data:parchment-${rootProject.props.parchment_mc}:${rootProject.props.parchment_ver}@zip")
     }
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.props.fabric_api}+${rootProject.minecraft}"
 }
 
 loom {
