@@ -35,6 +35,10 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.TypedEntityData;
 #endif
 
+#if !PRE_VILLAGERDATA_METHODS
+import net.minecraft.world.item.component.CustomModelData;
+#endif
+
 #if !PRE_WRITE_VIEW
 import net.minecraft.world.level.storage.TagValueOutput;
 #endif
@@ -110,7 +114,7 @@ public class CommonClass {
             changes.set(DataComponents.CUSTOM_NAME, villager.getCustomName());
         }
 
-        #if !PRE_CUSTOM_TEXTURES
+        #if !PRE_VILLAGERDATA_METHODS
         changes.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(
                 List.of(),
                 List.of(),

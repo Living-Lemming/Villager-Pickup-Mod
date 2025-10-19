@@ -24,7 +24,7 @@ public class ServerEntityInteractMixin {
 
     @Inject(method = "handleInteract", at = @At("HEAD"), cancellable = true)
     public void onPlayerInteract(ServerboundInteractPacket packet, CallbackInfo ci) {
-        #if !PRE_WRITE_VIEW
+        #if !PRE_PLAYER_LEVEL_METHOD
         Entity entity = packet.getTarget(player.level());
         #else
         Entity entity = packet.getTarget(player.serverLevel());
