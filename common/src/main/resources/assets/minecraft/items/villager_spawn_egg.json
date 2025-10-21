@@ -173,8 +173,17 @@
       {
         "when": "minecraft:nitwit",
         "model": {
-          "type": "minecraft:model",
-          "model": "minecraft:item/villager_spawn_egg"
+          "type": "minecraft:composite",
+          "models": [
+            {
+              "type": "minecraft:model",
+              "model": "minecraft:item/villager_spawn_egg"
+            },
+            {
+              "type": "minecraft:model",
+              "model": "villagerpickup:item/villager_spawn_egg_nitwit"
+            }
+          ]
         }
       },
       {
