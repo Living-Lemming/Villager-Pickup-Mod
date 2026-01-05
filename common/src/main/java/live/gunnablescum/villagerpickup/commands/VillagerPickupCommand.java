@@ -7,6 +7,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.SimpleMenuProvider;
 
 import static live.gunnablescum.villagerpickup.CommonClass.getStatusOfBool;
@@ -22,12 +23,12 @@ public class VillagerPickupCommand {
                     context.getSource().sendSystemMessage(getStatusOfBool("allow_villager_rename_with_anvil", "Villager Anvil Renaming"));
                     return 1;
                 }))
-                .then(literal("reload").requires(source -> source.hasPermission(4)).executes(context -> {
+                .then(literal("reload").requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_OWNER)).executes(context -> {
                     ConfigurationHandler.reloadConfig();
                     context.getSource().sendSuccess(() -> Component.literal("Config Reload successful.").withStyle(ChatFormatting.GREEN), true);
                     return 1;
                 }))
-                .then(literal("config-gui").requires(source -> source.hasPermission(4)).executes(context -> {
+                .then(literal("config-gui").requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_OWNER)).executes(context -> {
                     if(context.getSource().isPlayer()) {
                         ServerPlayer player = context.getSource().getPlayer();
                         context.getSource().sendSuccess(() -> Component.literal("Editing Villager-Pickup Config...").withStyle(ChatFormatting.GRAY), true);

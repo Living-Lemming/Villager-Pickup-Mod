@@ -7,6 +7,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
+import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -86,8 +88,9 @@ public class ConfigurationScreenHandler extends ChestMenu {
     @Override
     public void removed(Player player) {
         if(player instanceof ServerPlayer serverPlayer) {
-            for(Player operator : serverPlayer.level().getServer().getPlayerList().getPlayers()) {
-                if(operator.getPermissionLevel() != 4) continue;
+            PlayerList playerList = serverPlayer.level().getServer().getPlayerList();
+            for(Player operator : playerList.getPlayers()) {
+                if(!operator.permissions().hasPermission(Permissions.COMMANDS_OWNER)) continue;
                 operator.displayClientMessage(
                         Component.literal("[")
                                 .append(player.getDisplayName())
@@ -109,7 +112,7 @@ public class ConfigurationScreenHandler extends ChestMenu {
     @Override
     public void clicked(int slotId, int button, ClickType actionType, Player player) {
         // Edge case - Player gets deopped while in the config screen
-        if(player.getPermissionLevel() != 4) {
+        if(!player.permissions().hasPermission(Permissions.COMMANDS_OWNER)) {
             return;
         }
 

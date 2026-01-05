@@ -12,7 +12,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,8 +24,11 @@ import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,9 +46,19 @@ public class CommonClass {
         if(!ConfigurationHandler.getBoolean("enable_villager_pickup")) return null;
         if(!(entity instanceof Villager villager)) return null;
         TagValueOutput nbt = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, villager.level().registryAccess());
-        villager.addAdditionalSaveData(nbt);
+
+        //Reflection time
+        try {
+            Method saveData = Villager.class.getDeclaredMethod("addAdditionalSaveData", ValueOutput.class);
+            saveData.setAccessible(true);
+            saveData.invoke(villager, nbt);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
 
         nbt.discard("sleeping_pos");
+        nbt.putString("id", EntityType.VILLAGER.getDescriptionId());
 
         Item spawnEgg = SpawnEggItem.byId(EntityType.VILLAGER);
         if(spawnEgg == null) return null;
