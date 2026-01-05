@@ -24,11 +24,8 @@ import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.storage.TagValueOutput;
-import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -47,14 +44,7 @@ public class CommonClass {
         if(!(entity instanceof Villager villager)) return null;
         TagValueOutput nbt = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, villager.level().registryAccess());
 
-        //Reflection time
-        try {
-            Method saveData = Villager.class.getDeclaredMethod("addAdditionalSaveData", ValueOutput.class);
-            saveData.setAccessible(true);
-            saveData.invoke(villager, nbt);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        villager.addAdditionalSaveData(nbt);
 
 
         nbt.discard("sleeping_pos");
