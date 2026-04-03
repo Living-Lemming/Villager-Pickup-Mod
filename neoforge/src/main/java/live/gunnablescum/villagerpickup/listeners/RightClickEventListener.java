@@ -4,7 +4,11 @@ import live.gunnablescum.villagerpickup.CommonClass;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
@@ -42,6 +46,21 @@ public class RightClickEventListener {
 
         entity.remove(Entity.RemovalReason.DISCARDED);
         event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public void onBlockInteract(PlayerInteractEvent.RightClickBlock event) {
+        Player player = event.getEntity();
+        Level level = player.level();
+        Block block = level.getBlockState(event.getHitVec().getBlockPos()).getBlock();
+
+        if(!player.isCreative() && block == Blocks.SPAWNER && player.getItemInHand(event.getHand()).getItem() == Items.VILLAGER_SPAWN_EGG) {
+            event.setCancellationResult(InteractionResult.FAIL); // Fix for #31
+            event.setCanceled(true);
+            return;
+        }
+
+        event.setCancellationResult(InteractionResult.PASS);
     }
 
 }

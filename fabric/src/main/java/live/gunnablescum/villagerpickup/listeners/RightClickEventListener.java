@@ -1,6 +1,7 @@
 package live.gunnablescum.villagerpickup.listeners;
 
 import live.gunnablescum.villagerpickup.CommonClass;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -8,6 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 
 public class RightClickEventListener {
 
@@ -29,6 +31,14 @@ public class RightClickEventListener {
             entity.remove(Entity.RemovalReason.DISCARDED);
             return InteractionResult.SUCCESS;
         });
+        UseBlockCallback.EVENT.register(((player, level, interactionHand, blockHitResult) -> {
+
+            if (!player.isCreative() && level.getBlockState(blockHitResult.getBlockPos()).getBlock() == Blocks.SPAWNER && player.getItemInHand(interactionHand).getItem() == Items.VILLAGER_SPAWN_EGG) {
+                return InteractionResult.FAIL; // Fix for #31
+            }
+
+            return InteractionResult.PASS;
+        }));
     }
 
 }
