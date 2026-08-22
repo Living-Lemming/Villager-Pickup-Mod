@@ -51,12 +51,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the CC0-1.0 License. See the `LICENSE` file for details.
-
-# Very Important Video
-### ***Make sure the Video is unmuted BEFORE hitting play***
-
-https://github.com/user-attachments/assets/a37a00e3-c3bc-46ea-a1c7-2e8ca3144420
-<details>
-  <summary>Clarification of what this means (open only after watching)</summary>
-  Very Happy Birthday LivingLemming!
-</details>
