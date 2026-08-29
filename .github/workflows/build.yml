@@ -1,6 +1,10 @@
-name: Build Mod from Source for Testing
+name: Build Mod from Source
 
-on: [ pull_request, workflow_dispatch ]
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 permissions:
   contents: write
 
@@ -12,12 +16,12 @@ jobs:
         run: env
 
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           submodules: true
 
       - name: Setup Java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v6
         with:
           distribution: "temurin"
           java-version: 21
@@ -30,13 +34,13 @@ jobs:
         run: ./gradlew clean build
 
       - name: Upload Fabric Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Villager-Pickup-Mod-Fabric
           path: fabric/build/libs
 
       - name: Upload NeoForge Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Villager-Pickup-Mod-NeoForge
           path: neoforge/build/libs
