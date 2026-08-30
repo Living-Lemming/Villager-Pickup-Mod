@@ -34,7 +34,11 @@ public class ConfigurationScreenHandler extends ChestMenu {
         ItemStack[] content = new ItemStack[27];
         // Fill container with barrier blocks
         for (int i = 0; i < content.length; i++) {
+            #if MC_26_1
             content[i] = Items.LIGHT_GRAY_STAINED_GLASS_PANE.getDefaultInstance();
+            #elif MC_26_2
+            content[i] = Items.STAINED_GLASS_PANE.lightGray().getDefaultInstance();
+            #endif
             DataComponentPatch.Builder changes = DataComponentPatch.builder();
             changes.set(DataComponents.CUSTOM_NAME, Component.nullToEmpty(""));
             content[i].applyComponentsAndValidate(changes.build());

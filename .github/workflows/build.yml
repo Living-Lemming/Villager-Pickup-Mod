@@ -11,6 +11,10 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        minecraft: ['26.1', '26.2']
     steps:
       - name: Check Environment Variables
         run: env
@@ -30,17 +34,17 @@ jobs:
         if: ${{ runner.os != 'Windows' }}
         run: chmod +x ./gradlew
 
-      - name: Build
-        run: ./gradlew clean build
+      - name: Build (${{ matrix.minecraft }})
+        run: ./gradlew clean build -Pminecraft=${{ matrix.minecraft }}
 
-      - name: Upload Fabric Artifact
+      - name: Upload Fabric Artifact (${{ matrix.minecraft }})
         uses: actions/upload-artifact@v7
         with:
-          name: Villager-Pickup-Mod-Fabric
+          name: Villager-Pickup-Mod-Fabric-${{ matrix.minecraft }}
           path: fabric/build/libs
 
-      - name: Upload NeoForge Artifact
+      - name: Upload NeoForge Artifact (${{ matrix.minecraft }})
         uses: actions/upload-artifact@v7
         with:
-          name: Villager-Pickup-Mod-NeoForge
+          name: Villager-Pickup-Mod-NeoForge-${{ matrix.minecraft }}
           path: neoforge/build/libs

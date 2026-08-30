@@ -12,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -26,6 +25,11 @@ import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.storage.TagValueOutput;
 import org.jetbrains.annotations.NotNull;
+#if MC_26_1
+import net.minecraft.world.entity.EntityType;
+#elif MC_26_2
+import net.minecraft.world.entity.EntityTypes;
+#endif
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,9 +53,14 @@ public class CommonClass {
 
 
         nbt.discard("sleeping_pos");
+        #if MC_26_1
         nbt.putString("id", EntityType.VILLAGER.getDescriptionId());
-
         Optional<Holder<Item>> spawnEgg = SpawnEggItem.byId(EntityType.VILLAGER);
+        #elif MC_26_2
+        nbt.putString("id", EntityTypes.VILLAGER.getDescriptionId());
+        Optional<Holder<Item>> spawnEgg = SpawnEggItem.byId(EntityTypes.VILLAGER);
+        #endif
+
         if(spawnEgg.isEmpty()) return null;
 
         ItemStack spawnEggStack = new ItemStack(spawnEgg.get().value());
@@ -78,7 +87,11 @@ public class CommonClass {
         ItemLore loreData = new ItemLore(lore);
 
         DataComponentPatch.Builder changes = DataComponentPatch.builder()
+        #if MC_26_1
                 .set(DataComponents.ENTITY_DATA, TypedEntityData.of(EntityType.VILLAGER, nbt.buildResult()))
+        #elif MC_26_2
+                .set(DataComponents.ENTITY_DATA, TypedEntityData.of(EntityTypes.VILLAGER, nbt.buildResult()))
+        #endif
                 .set(DataComponents.LORE, loreData);
 
         if(villager.hasCustomName()) {
