@@ -1,42 +1,50 @@
-name: Build Mod from Source for Testing
+name: Build Mod from Source
 
-on: [ pull_request, workflow_dispatch ]
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 permissions:
   contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        minecraft: ['26.1', '26.2']
     steps:
       - name: Check Environment Variables
         run: env
 
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           submodules: true
 
       - name: Setup Java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v6
         with:
           distribution: "temurin"
-          java-version: 21
+          java-version: 25
 
       - name: Make Gradle Wrapper Executable
         if: ${{ runner.os != 'Windows' }}
         run: chmod +x ./gradlew
 
-      - name: Build
-        run: ./gradlew clean build
+      - name: Build (${{ matrix.minecraft }})
+        run: ./gradlew clean build -Pminecraft=${{ matrix.minecraft }}
 
-      - name: Upload Fabric Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Fabric Artifact (${{ matrix.minecraft }})
+        uses: actions/upload-artifact@v7
         with:
-          name: Villager-Pickup-Mod-Fabric
+          name: Villager-Pickup-Mod-Fabric-${{ matrix.minecraft }}
           path: fabric/build/libs
 
-      - name: Upload NeoForge Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload NeoForge Artifact (${{ matrix.minecraft }})
+        uses: actions/upload-artifact@v7
         with:
-          name: Villager-Pickup-Mod-NeoForge
+          name: Villager-Pickup-Mod-NeoForge-${{ matrix.minecraft }}
           path: neoforge/build/libs

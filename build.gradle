@@ -1,6 +1,56 @@
 plugins {
     // see https://fabricmc.net/develop/ for new versions
-    id 'fabric-loom' version '1.13-SNAPSHOT' apply false
+    id 'fabric-loom' version '1.17-SNAPSHOT' apply false
     // see https://projects.neoforged.net/neoforged/moddevgradle for new versions
-    id 'net.neoforged.moddev' version '2.0.123' apply false
+    id 'net.neoforged.moddev' version '2.0.144' apply false
+}
+
+import java.util.Properties
+
+ext.manifoldVersion = '2026.1.11'
+
+def selectedMinecraft = providers.gradleProperty('minecraft')
+    .orElse(providers.provider { '26.1' })
+    .get()
+    .trim()
+
+if (!selectedMinecraft) {
+    throw new GradleException('No Minecraft target selected.')
+}
+
+ext.minecraft = selectedMinecraft
+
+File versionPropsFile = rootProject.file("props/${selectedMinecraft}.properties")
+if (!versionPropsFile.exists()) {
+    throw new GradleException("Minecraft target '${selectedMinecraft}' is not defined in props/${selectedMinecraft}.properties")
+}
+
+Properties versionProps = new Properties()
+versionPropsFile.withInputStream { stream -> versionProps.load(stream) }
+allprojects {
+    versionProps.each { key, value ->
+        if (key instanceof String && value instanceof String) {
+            ext.set(key as String, value.trim())
+        }
+    }
+    ext.minecraft = selectedMinecraft
+}
+
+def normalizeFlagName = { String value -> value.replace('.', '_').replace('-', '_') }
+def exactFlag = "MC_${normalizeFlagName(selectedMinecraft)}"
+println("Selected Minecraft Target ${exactFlag}")
+
+new File(projectDir, "build.properties").text = "${exactFlag}=true\n"
+
+subprojects {
+    plugins.withType(JavaPlugin).configureEach {
+        tasks.withType(JavaCompile).configureEach {
+            options.compilerArgs += ['-Xplugin:Manifold']
+        }
+
+        dependencies {
+            compileOnly "systems.manifold:manifold-preprocessor:${rootProject.ext.manifoldVersion}"
+            annotationProcessor "systems.manifold:manifold-preprocessor:${rootProject.ext.manifoldVersion}"
+        }
+    }
 }

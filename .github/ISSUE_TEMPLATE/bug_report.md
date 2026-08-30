@@ -24,7 +24,7 @@ If applicable, add screenshots to help explain your problem.
 **Minecraft (please complete the following information):**
  - Version: [e.g. 1.21.4]
  - Version of the mod: [e.g. 1.0.0]
- - Fabric Loader and API version: [e.g. 0.16.10 & 0.118.5+1.21.4]
+ - Loader: [e.g. Fabric]
 
 **Additional context**
 Add any other context about the problem here (Like logs, etc.).

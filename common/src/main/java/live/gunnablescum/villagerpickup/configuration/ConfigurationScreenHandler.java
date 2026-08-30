@@ -13,7 +13,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -34,7 +34,11 @@ public class ConfigurationScreenHandler extends ChestMenu {
         ItemStack[] content = new ItemStack[27];
         // Fill container with barrier blocks
         for (int i = 0; i < content.length; i++) {
+            #if MC_26_1
             content[i] = Items.LIGHT_GRAY_STAINED_GLASS_PANE.getDefaultInstance();
+            #elif MC_26_2
+            content[i] = Items.STAINED_GLASS_PANE.lightGray().getDefaultInstance();
+            #endif
             DataComponentPatch.Builder changes = DataComponentPatch.builder();
             changes.set(DataComponents.CUSTOM_NAME, Component.nullToEmpty(""));
             content[i].applyComponentsAndValidate(changes.build());
@@ -91,15 +95,14 @@ public class ConfigurationScreenHandler extends ChestMenu {
             PlayerList playerList = serverPlayer.level().getServer().getPlayerList();
             for(Player operator : playerList.getPlayers()) {
                 if(!operator.permissions().hasPermission(Permissions.COMMANDS_OWNER)) continue;
-                operator.displayClientMessage(
+                operator.sendSystemMessage(
                         Component.literal("[")
                                 .append(player.getDisplayName())
                                 .append(": Changed Villager-Pickup Config]")
                                 .withStyle(Style.EMPTY
                                         .withColor(ChatFormatting.GRAY)
                                         .withItalic(true)
-                                ),
-                        false
+                                )
                 );
             }
         }
@@ -110,7 +113,7 @@ public class ConfigurationScreenHandler extends ChestMenu {
     }
 
     @Override
-    public void clicked(int slotId, int button, ClickType actionType, Player player) {
+    public void clicked(int slotId, int button, ContainerInput actionType, Player player) {
         // Edge case - Player gets deopped while in the config screen
         if(!player.permissions().hasPermission(Permissions.COMMANDS_OWNER)) {
             return;
