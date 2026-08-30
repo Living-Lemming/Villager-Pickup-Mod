@@ -15,13 +15,12 @@ meaning they stay exactly the same as before you picked them up.
 
 ## Compatibility
 
-Due to the way this mod is coded, 
-it works with all modded villagers by default if they are not a separate entity 
-(for example, you can't pick up wandering traders).
+Due to the way this mod is coded, it works with all modded villagers by default if they are not a separate entity.
+<br>(for example, you can't pick up wandering traders).
 
 ## Installation
 
-1. Download the mod from [Modrinth](https://modrinth.com/mod/villager-pickup) or [CurseForge](https://www.curseforge.com/minecraft/mc-mods/villagerpickup).
+1. Download the mod from [Modrinth](https://modrinth.com/mod/villager-pickup) or the [GitHub Releases](https://github.com/Living-Lemming/Villager-Pickup-Mod/releases).
 2. Place the downloaded mod file into the `mods` folder of your Minecraft server.
 3. Restart the server to apply the changes.
 
@@ -33,6 +32,8 @@ You will find it under `config/villager-pickup.json`.
 
 After making changes, you don't have to restart! Just use the `/villager-pickup reload` Command.
 
+You can also use the Ingame Config Editor using `/villager-pickup config-gui`.
+
 ## Usage
 
 Simply shift right-click on a Villager. The villager will be converted into a spawn egg.
@@ -41,12 +42,19 @@ You can place them down again afterward.
 
 ## Links
 
+- [Source Code](https://github.com/Living-Lemming/Villager-Pickup-Mod)
+- [Issue Tracker/Feature Requests](https://github.com/Living-Lemming/Villager-Pickup-Mod/issues)
+- [GitHub Releases](https://github.com/Living-Lemming/Villager-Pickup-Mod/releases)
 - [Modrinth Page](https://modrinth.com/mod/villager-pickup)
-- [CurseForge Page](https://www.curseforge.com/minecraft/mc-mods/villagerpickup)
+- ~~[CurseForge Page](https://www.curseforge.com/minecraft/mc-mods/villagerpickup)~~ (Out of date, please avoid.)
 
-## Contributing
+## Contributing and Development
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are always welcome! Please feel free to submit a Pull Request.
+
+For Development, the recommended IDE is [IntelliJ IDEA](https://www.jetbrains.com/idea/).
+<br>
+You are also encouraged to install the [Minecraft Development](https://plugins.jetbrains.com/plugin/8327-minecraft-development) and [manifold-ij](https://plugins.jetbrains.com/plugin/10057-manifold-ij/versions/stable) plugins for it.
 
 ## License
 
