@@ -132,6 +132,6 @@ public class CommonClass {
 
     public static Component getStatusOfBool(String key, String displayName) {
         boolean value = ConfigurationHandler.getBoolean(key);
-        return Component.literal(displayName + ": " + value).withStyle(value ? ChatFormatting.GREEN : ChatFormatting.RED).append(Component.literal(value ? "Enabled" : "Disabled"));
+        return Component.literal(displayName + ": ").withStyle(value ? ChatFormatting.GREEN : ChatFormatting.RED).append(Component.literal(value ? "Enabled" : "Disabled"));
     }
 }
