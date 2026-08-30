@@ -1,5 +1,6 @@
 package live.gunnablescum.villagerpickup;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -7,6 +8,7 @@ import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
@@ -38,13 +40,22 @@ public class CommonUtilities {
         Optional<ItemCost> secondBuyItem = offer.getItemCostB();
         ItemStack sellItem = offer.getResult();
 
-        MutableComponent toDisplay = Component.literal(firstBuyItem.getCount() + "x ").append(Component.translatable(firstBuyItem.getItem().getDescriptionId()));
+        MutableComponent toDisplay = Component.literal(String.valueOf(firstBuyItem.getCount()))
+                .append("x ")
+                .append(Component.translatable(firstBuyItem.getItem().getDescriptionId()));
         if (secondBuyItem.isPresent()) {
             ItemStack secondBuyItemStack = secondBuyItem.get().itemStack();
-            toDisplay.append(" + ").append(secondBuyItemStack.getCount() + "x ").append(Component.translatable(secondBuyItemStack.getItem().getDescriptionId()));
+            toDisplay
+                    .append(" + ")
+                    .append(String.valueOf(secondBuyItemStack.getCount()))
+                    .append("x ")
+                    .append(Component.translatable(secondBuyItemStack.getItem().getDescriptionId()));
         }
 
-        toDisplay.append(" = " + sellItem.getCount() + "x ");
+        toDisplay
+                .append(" = ")
+                .append(String.valueOf(sellItem.getCount()))
+                .append("x ");
 
         if (sellItem.getItem() != Items.ENCHANTED_BOOK) {
             toDisplay.append(Component.translatable(sellItem.getItem().getDescriptionId()));
@@ -59,7 +70,10 @@ public class CommonUtilities {
 
 
         //noinspection OptionalGetWithoutIsPresent (There is a check above to make sure there is at least 1 enchantment)
-        toDisplay.append(enchantments.keySet().stream().findFirst().get().value().description());
+        Holder<Enchantment> enchantment = enchantments.keySet().stream().findFirst().get();
+        toDisplay.append(enchantment.value().description())
+                .append(" ")
+                .append(Component.translatable("enchantment.level." + enchantments.getLevel(enchantment)));
         return createLoreText(toDisplay);
     }
 
@@ -67,7 +81,7 @@ public class CommonUtilities {
         List<Component> lore = new ArrayList<>();
 
         lore.add(createHealthText(villager.getHealth(), villager.getMaxHealth()));
-        lore.add(Component.literal("Profession: [" + villager.getVillagerData().profession().getRegisteredName() + "]"));
+        lore.add(createLoreText(Component.literal("Profession: [" + villager.getVillagerData().profession().getRegisteredName() + "]")));
 
 
         // Add Level to lore if applicable
