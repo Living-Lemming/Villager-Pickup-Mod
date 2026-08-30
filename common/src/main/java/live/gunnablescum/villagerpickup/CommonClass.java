@@ -5,6 +5,7 @@ import live.gunnablescum.villagerpickup.commands.VillagerPickupCommand;
 import live.gunnablescum.villagerpickup.configuration.ConfigurationHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -50,9 +51,10 @@ public class CommonClass {
         nbt.discard("sleeping_pos");
         nbt.putString("id", EntityType.VILLAGER.getDescriptionId());
 
-        Item spawnEgg = SpawnEggItem.byId(EntityType.VILLAGER);
-        if(spawnEgg == null) return null;
-        ItemStack spawnEggStack = new ItemStack(spawnEgg);
+        Optional<Holder<Item>> spawnEgg = SpawnEggItem.byId(EntityType.VILLAGER);
+        if(spawnEgg.isEmpty()) return null;
+
+        ItemStack spawnEggStack = new ItemStack(spawnEgg.get().value());
 
         Component healthText = createHealthText(villager.getHealth(), villager.getMaxHealth());
         Component professionText = createLoreText(Component.literal("Profession: [" + villager.getVillagerData().profession().getRegisteredName() + "]"));
@@ -80,6 +82,7 @@ public class CommonClass {
                 .set(DataComponents.LORE, loreData);
 
         if(villager.hasCustomName()) {
+            //noinspection DataFlowIssue (getCustomName can return null, but we check for it above)
             changes.set(DataComponents.CUSTOM_NAME, villager.getCustomName());
         }
 
