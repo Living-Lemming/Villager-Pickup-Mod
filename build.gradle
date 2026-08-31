@@ -3,6 +3,12 @@ plugins {
     id 'fabric-loom' version '1.17-SNAPSHOT' apply false
     // see https://projects.neoforged.net/neoforged/moddevgradle for new versions
     id 'net.neoforged.moddev' version '2.0.144' apply false
+    // see https://github.com/PacifistMC/Forgix/releases for new versions
+    id 'io.github.pacifistmc.forgix' version '2.0.0'
+}
+
+forgix {
+    autoRun = true // Merges Loaders, NOT versions
 }
 
 import java.util.Properties

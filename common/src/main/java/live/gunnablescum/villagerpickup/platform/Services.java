@@ -3,28 +3,53 @@ package live.gunnablescum.villagerpickup.platform;
 import live.gunnablescum.villagerpickup.Constants;
 import live.gunnablescum.villagerpickup.platform.services.IPlatformHelper;
 
-import java.util.ServiceLoader;
-
-// Service loaders are a built-in Java feature that allow us to locate implementations of an interface that vary from one
-// environment to another. In the context of MultiLoader we use this feature to access a mock API in the common code that
-// is swapped out for the platform specific implementation at runtime.
 public class Services {
 
-    // In this example we provide a platform helper which provides information about what platform the mod is running on.
-    // For example this can be used to check if the code is running on Forge vs Fabric, or to ask the modloader if another
-    // mod is loaded.
+    // Expose a PlatformHelper so we can determine the Config Folder
     public static final IPlatformHelper PLATFORM = load(IPlatformHelper.class);
 
-    // This code is used to load a service for the current environment. Your implementation of the service must be defined
-    // manually by including a text file in META-INF/services named with the fully qualified class name of the service.
-    // Inside the file you should write the fully qualified class name of the implementation to load for the platform. For
-    // example our file on Forge points to ForgePlatformHelper while Fabric points to FabricPlatformHelper.
+    // Runtime detection via platform loader class presence (deterministic when JARs are merged)
+    // God I hope these don't change anytime soon
     public static <T> T load(Class<T> clazz) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-        final T loadedService = ServiceLoader.load(clazz)
-                .findFirst()
-                .orElseThrow(() -> new NullPointerException("Failed to load service for " + clazz.getName()));
-        Constants.LOG.debug("Loaded {} for service {}", loadedService, clazz);
-        return loadedService;
+        if (clazz.equals(IPlatformHelper.class)) {
+            // Check if we are on NeoForge
+            if (isClassPresent("net.neoforged.fml.loading.FMLLoader", classLoader)) {
+                Object inst = instantiate("live.gunnablescum.villagerpickup.platform.NeoForgePlatformHelper", classLoader);
+                if (inst != null) return clazz.cast(inst);
+            }
+
+            // Check if we are on Fabric
+            if (isClassPresent("net.fabricmc.loader.api.FabricLoader", classLoader)) {
+                Object inst = instantiate("live.gunnablescum.villagerpickup.platform.FabricPlatformHelper", classLoader);
+                if (inst != null) return clazz.cast(inst);
+            }
+        }
+
+        // Uh oh. Something's wrong, I can feel it.
+        throw new NullPointerException(String.format("[%s] Couldn't determine running ModLoader or instantiate the correct PlatformHelper, cowardly throwing a NullPointerException...", Constants.MOD_NAME));
+    }
+
+    private static boolean isClassPresent(String fqcn, ClassLoader classLoader) {
+        try {
+            Class.forName(fqcn, false, classLoader);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        } catch (Throwable t) {
+            // Any other error treat as absent and log
+            Constants.LOG.warn("Error while checking presence of {}", fqcn, t);
+            return false;
+        }
+    }
+
+    private static Object instantiate(String fqcn, ClassLoader classLoader) {
+        try {
+            return Class.forName(fqcn, true, classLoader).getDeclaredConstructor().newInstance();
+        } catch (Throwable t) {
+            Constants.LOG.warn("Failed to instantiate {} via reflection", fqcn, t);
+            return null;
+        }
     }
 }
