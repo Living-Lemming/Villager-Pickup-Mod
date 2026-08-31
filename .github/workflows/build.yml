@@ -37,14 +37,8 @@ jobs:
       - name: Build (${{ matrix.minecraft }})
         run: ./gradlew clean build -Pminecraft=${{ matrix.minecraft }}
 
-      - name: Upload Fabric Artifact (${{ matrix.minecraft }})
+      - name: Upload Artifact (${{ matrix.minecraft }})
         uses: actions/upload-artifact@v7
         with:
-          name: Villager-Pickup-Mod-Fabric-${{ matrix.minecraft }}
-          path: fabric/build/libs
-
-      - name: Upload NeoForge Artifact (${{ matrix.minecraft }})
-        uses: actions/upload-artifact@v7
-        with:
-          name: Villager-Pickup-Mod-NeoForge-${{ matrix.minecraft }}
-          path: neoforge/build/libs
+          name: Villager-Pickup-Mod-${{ matrix.minecraft }}
+          path: build/forgix
