@@ -29,10 +29,10 @@ public class ConfigurationScreenHandler extends ChestMenu {
         updateInventory();
     }
 
-    // TODO: Replace this with a Paginated system if enough config options are added
+    // TODO: Replace this (This code hurts my eyes)
     private void updateInventory() {
         ItemStack[] content = new ItemStack[27];
-        // Fill container with barrier blocks
+        // Fill container with glass panes
         for (int i = 0; i < content.length; i++) {
             #if MC_26_1
             content[i] = Items.LIGHT_GRAY_STAINED_GLASS_PANE.getDefaultInstance();
@@ -45,10 +45,10 @@ public class ConfigurationScreenHandler extends ChestMenu {
         }
         content[11] = Items.VILLAGER_SPAWN_EGG.getDefaultInstance();
         DataComponentPatch.Builder changes = DataComponentPatch.builder();
-        changes.set(DataComponents.ITEM_NAME, Component.literal("Villager Pickup").withStyle(ChatFormatting.GOLD));
+        changes.set(DataComponents.ITEM_NAME, Component.literal(ConfigurationElement.ENABLE_VILLAGER_PICKUP.displayName).withStyle(ChatFormatting.GOLD));
         changes.set(DataComponents.LORE, new ItemLore(
                 getStatusLore(
-                        ConfigurationHandler.getBoolean("enable_villager_pickup"),
+                        ConfigurationHandler.get(ConfigurationElement.ENABLE_VILLAGER_PICKUP),
                         "Toggle this option to enable or disable Villager Pickup."
                 )
         ));
@@ -59,7 +59,7 @@ public class ConfigurationScreenHandler extends ChestMenu {
         changes.set(DataComponents.ITEM_NAME, Component.literal("Allow Villager Rename with Anvil").withStyle(ChatFormatting.GOLD));
         changes.set(DataComponents.LORE, new ItemLore(
                 getStatusLore(
-                        ConfigurationHandler.getBoolean("allow_villager_rename_with_anvil"),
+                        ConfigurationHandler.get(ConfigurationElement.ALLOW_VILLAGER_ANVIL_RENAME),
                         "Toggle this option to enable or disable",
                         "renaming Villagers in an Anvil."
                 )
@@ -121,10 +121,10 @@ public class ConfigurationScreenHandler extends ChestMenu {
 
         switch (slotId) {
             case 11:
-                ConfigurationHandler.setBoolean("enable_villager_pickup", !ConfigurationHandler.getBoolean("enable_villager_pickup"));
+                ConfigurationHandler.toggle(ConfigurationElement.ENABLE_VILLAGER_PICKUP);
                 break;
             case 15:
-                ConfigurationHandler.setBoolean("allow_villager_rename_with_anvil", !ConfigurationHandler.getBoolean("allow_villager_rename_with_anvil"));
+                ConfigurationHandler.toggle(ConfigurationElement.ALLOW_VILLAGER_ANVIL_RENAME);
                 break;
         }
         updateInventory();

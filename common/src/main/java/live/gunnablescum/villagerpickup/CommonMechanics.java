@@ -1,5 +1,6 @@
 package live.gunnablescum.villagerpickup;
 
+import live.gunnablescum.villagerpickup.configuration.ConfigurationElement;
 import live.gunnablescum.villagerpickup.configuration.ConfigurationHandler;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
@@ -32,7 +33,7 @@ import java.util.Optional;
 public class CommonMechanics {
 
     public static InteractionResult handleVillagerInteraction(Player player, Entity entity, InteractionHand hand) {
-        if(!ConfigurationHandler.getBoolean("enable_villager_pickup")) return InteractionResult.PASS; // If the mod is disabled, don't do anything.
+        if(!ConfigurationHandler.get(ConfigurationElement.ENABLE_VILLAGER_PICKUP)) return InteractionResult.PASS; // If the mod is disabled, don't do anything.
 
         #if MC_26_1
         if(entity.getType() != EntityType.VILLAGER) return InteractionResult.PASS; // Don't do anything if it's not a villager.
