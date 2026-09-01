@@ -27,8 +27,8 @@ public class ConfigurationHandler {
         return new File(Services.PLATFORM.getConfigDirectory(), "villager-pickup.json");
     }
 
-    public static boolean saveConfig() {
-        return config.saveConfig();
+    public static void saveConfig() {
+        config.saveConfig();
     }
 
 }

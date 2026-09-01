@@ -78,7 +78,7 @@ public class Configuration {
         settings.get(element).toggle();
     }
 
-    boolean saveConfig() { /* package-private */
+    void saveConfig() { /* package-private */
         try {
             HashMap<String, Boolean> values = new HashMap<>();
             for(ConfigurationElement element : ConfigurationElement.values()) {
@@ -87,10 +87,8 @@ public class Configuration {
             FileWriter writer = new FileWriter(file);
             writer.write(gson.toJson(values));
             writer.close();
-            return true;
         } catch(IOException e) {
             Constants.LOG.error("Failure to save configuration. Config changes will not persist.");
         }
-        return false;
     }
 }
