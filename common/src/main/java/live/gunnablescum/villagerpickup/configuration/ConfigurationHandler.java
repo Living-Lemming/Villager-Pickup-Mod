@@ -12,10 +12,6 @@ public class ConfigurationHandler {
     }
 
     public static boolean get(ConfigurationElement element) {
-        return getSetting(element).getValue();
-    }
-
-    public static Setting getSetting(ConfigurationElement element) {
         return config.settings.get(element);
     }
 

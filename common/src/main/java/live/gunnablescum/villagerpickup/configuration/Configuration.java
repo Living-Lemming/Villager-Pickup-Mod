@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class Configuration {
 
-    Map<ConfigurationElement, Setting> settings;
+    Map<ConfigurationElement, Boolean> settings;
     private final Gson gson;
     private final File file;
 
@@ -62,14 +62,14 @@ public class Configuration {
                 Constants.LOG.warn("Extra unrecognized Configuration Entry: \"{}\". Ignoring...", key);
                 continue;
             }
-            settings.get(opt.get()).setValue(values.get(key));
+            settings.put(opt.get(), values.get(key));
         }
 
         // Load missing values with default
         for(ConfigurationElement element : ConfigurationElement.values()) {
             if(!settings.containsKey(element)) {
                 Constants.LOG.warn("Missing config value of \"{}\" has been set to default: {}", element.configName, element.defaultValue);
-                settings.put(element, new Setting(element.defaultValue));
+                settings.put(element, element.defaultValue);
             }
         }
 
@@ -78,7 +78,7 @@ public class Configuration {
 
     private boolean loadDefaults() {
         for(ConfigurationElement element : ConfigurationElement.values()) {
-            this.settings.put(element, new Setting(element.defaultValue));
+            this.settings.put(element, element.defaultValue);
         }
         return false;
     }
@@ -96,14 +96,14 @@ public class Configuration {
     }
 
     void toggle(ConfigurationElement element) { /* package-private */
-        settings.get(element).toggle();
+        settings.put(element, !settings.get(element));
     }
 
     void saveConfig() { /* package-private */
         try {
             HashMap<String, Boolean> values = new HashMap<>();
             for(ConfigurationElement element : ConfigurationElement.values()) {
-                values.put(element.configName, settings.get(element).getValue());
+                values.put(element.configName, settings.get(element));
             }
             FileWriter writer = new FileWriter(file);
             writer.write(gson.toJson(values));
@@ -147,7 +147,7 @@ public class Configuration {
                 boolean value = entry.getValue().getAsBoolean();
                 Optional<ConfigurationElement> opt = findConfigurationElement(key);
                 if(opt.isPresent()) {
-                    settings.get(opt.get()).setValue(value);
+                    settings.put(opt.get(), value);
                     continue;
                 }
 
@@ -178,7 +178,7 @@ public class Configuration {
 
             if(element.previousConfigNames.contains(key)) {
                 Constants.LOG.info("Changed old key \"{}\" to \"{}\".", key, element.configName);
-                settings.get(element).setValue(value);
+                settings.put(element, value);
                 return true;
             }
         }

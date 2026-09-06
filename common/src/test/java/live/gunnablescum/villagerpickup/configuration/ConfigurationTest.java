@@ -39,8 +39,8 @@ class ConfigurationTest {
         Configuration configuration = new Configuration(configFile.toFile());
 
         // Check that the values remain
-        assertFalse(configuration.settings.get(ConfigurationElement.ENABLE_VILLAGER_PICKUP).getValue());
-        assertTrue(configuration.settings.get(ConfigurationElement.ALLOW_VILLAGER_ANVIL_RENAME).getValue());
+        assertFalse(configuration.settings.get(ConfigurationElement.ENABLE_VILLAGER_PICKUP));
+        assertTrue(configuration.settings.get(ConfigurationElement.ALLOW_VILLAGER_ANVIL_RENAME));
 
         String savedConfig = Files.readString(configFile);
         assertTrue(savedConfig.contains("\"enable_villager_pickup\""));
