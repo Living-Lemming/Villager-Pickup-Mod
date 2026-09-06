@@ -1,16 +1,20 @@
 package live.gunnablescum.villagerpickup.configuration;
 
+import java.util.List;
+
 public enum ConfigurationElement {
-    ENABLE_VILLAGER_PICKUP("enable_villager_pickup", "Enable Villager Pickup", true),
-    ALLOW_VILLAGER_ANVIL_RENAME("allow_villager_anvil_rename", "Allow Villager Rename with Anvil", false);
+    ENABLE_VILLAGER_PICKUP("enable_villager_pickup", "Enable Villager Pickup", true, null),
+    ALLOW_VILLAGER_ANVIL_RENAME("allow_villager_anvil_rename", "Allow Villager Rename with Anvil", false, List.of("allow_villager_rename_with_anvil"));
 
     public final String configName;
     public final String displayName;
     public final boolean defaultValue;
+    public final List<String> previousConfigNames;
 
-    ConfigurationElement(String configName, String displayName, boolean defaultValue) {
+    ConfigurationElement(String configName, String displayName, boolean defaultValue, List<String> previousConfigNames) {
         this.configName = configName;
         this.displayName = displayName;
         this.defaultValue = defaultValue;
+        this.previousConfigNames = previousConfigNames;
     }
 }
