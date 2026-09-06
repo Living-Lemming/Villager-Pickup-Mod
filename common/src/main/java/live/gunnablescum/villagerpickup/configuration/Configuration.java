@@ -64,6 +64,15 @@ public class Configuration {
             }
             settings.get(opt.get()).setValue(values.get(key));
         }
+
+        // Load missing values with default
+        for(ConfigurationElement element : ConfigurationElement.values()) {
+            if(!settings.containsKey(element)) {
+                Constants.LOG.warn("Missing config value of \"{}\" has been set to default: {}", element.configName, element.defaultValue);
+                settings.put(element, new Setting(element.defaultValue));
+            }
+        }
+
         return true;
     }
 
