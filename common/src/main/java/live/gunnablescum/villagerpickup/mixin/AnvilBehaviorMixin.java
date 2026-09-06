@@ -1,5 +1,6 @@
 package live.gunnablescum.villagerpickup.mixin;
 
+import live.gunnablescum.villagerpickup.configuration.ConfigurationElement;
 import live.gunnablescum.villagerpickup.configuration.ConfigurationHandler;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.entity.player.Player;
@@ -17,7 +18,7 @@ public class AnvilBehaviorMixin {
     public void canTakeOutput(Player player, boolean present, CallbackInfoReturnable<Boolean> cir) {
         AnvilMenu anvilScreenHandler = (AnvilMenu) (Object) this;
         if(anvilScreenHandler.inputSlots.getItem(0).getItem() != Items.VILLAGER_SPAWN_EGG) return;
-        if(!ConfigurationHandler.getBoolean("allow_villager_rename_with_anvil") && !player.permissions().hasPermission(Permissions.COMMANDS_OWNER)) {
+        if(!ConfigurationHandler.get(ConfigurationElement.ALLOW_VILLAGER_ANVIL_RENAME) && !player.permissions().hasPermission(Permissions.COMMANDS_OWNER)) {
             cir.setReturnValue(false);
         }
     }
