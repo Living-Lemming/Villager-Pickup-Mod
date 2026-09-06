@@ -4,7 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import live.gunnablescum.villagerpickup.configuration.ConfigurationElement;
 import live.gunnablescum.villagerpickup.configuration.ConfigurationHandler;
-import live.gunnablescum.villagerpickup.configuration.ConfigurationScreenHandler;
+import live.gunnablescum.villagerpickup.configuration.NonClientConfigurationScreenHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -49,9 +49,9 @@ public class VillagerPickupCommand {
     private static int openConfigurationMenu(CommandContext<CommandSourceStack> context) {
         if(context.getSource().isPlayer()) {
             ServerPlayer player = context.getSource().getPlayer();
-            context.getSource().sendSuccess(() -> Component.literal("Editing Villager-Pickup Config..."), true);
+            context.getSource().sendSuccess(() -> Component.literal("Editing Villager-Pickup Config..."), false);
             //noinspection DataFlowIssue (player is not null, because there is a isPlayer check above)
-            player.openMenu(new SimpleMenuProvider((syncId, playerInventory, _) -> new ConfigurationScreenHandler(syncId, playerInventory), Component.literal("Villager-Pickup Config")));
+            player.openMenu(new SimpleMenuProvider((syncId, playerInventory, _) -> new NonClientConfigurationScreenHandler(syncId, playerInventory), Component.literal("Villager-Pickup Config")));
             return 1;
         }
         context.getSource().sendFailure(Component.literal("This command can only be executed by a player."));
